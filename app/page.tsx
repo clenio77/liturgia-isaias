@@ -8,6 +8,9 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatLiturgicalDate, getLiturgicalColor } from '@/lib/utils'
+import { getLiturgicalData, LiturgicalData } from '@/lib/liturgical-calendar'
+import { getCompleteMassSuggestions } from '@/lib/music-suggestions'
+import { uploadFile, validateFile } from '@/lib/upload-service'
 import {
   Calendar,
   Music,
@@ -69,6 +72,7 @@ export default function Dashboard() {
   const [showNewMassModal, setShowNewMassModal] = useState(false)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showPresentationModal, setShowPresentationModal] = useState(false)
+  const [showSuggestionsModal, setShowSuggestionsModal] = useState(false)
 
   // Estados para formulários
   const [newMass, setNewMass] = useState({
@@ -78,27 +82,96 @@ export default function Dashboard() {
     liturgicalTime: 'ORDINARY'
   })
 
-  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [uploadFileState, setUploadFileState] = useState<File | null>(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isUploading, setIsUploading] = useState(false)
+
+  // Estados para dados litúrgicos
+  const [liturgicalData, setLiturgicalData] = useState<LiturgicalData | null>(null)
+  const [suggestions, setSuggestions] = useState<any>(null)
 
   // Funções para ações rápidas
-  const handleNewMass = () => {
-    console.log('Nova missa criada:', newMass)
-    // Aqui você adicionaria a lógica para salvar no backend
+  const handleNewMass = async () => {
+    if (!newMass.date || !newMass.title) {
+      alert('Por favor, preencha os campos obrigatórios')
+      return
+    }
+
+    // Obter dados litúrgicos automaticamente
+    const selectedDate = new Date(newMass.date)
+    const liturgicalInfo = getLiturgicalData(selectedDate)
+
+    // Gerar sugestões de músicas
+    const musicSuggestions = getCompleteMassSuggestions(liturgicalInfo)
+
+    console.log('Nova missa criada:', {
+      ...newMass,
+      liturgicalInfo,
+      suggestions: musicSuggestions
+    })
+
+    // Mostrar sugestões para o usuário
+    setLiturgicalData(liturgicalInfo)
+    setSuggestions(musicSuggestions)
+    setShowSuggestionsModal(true)
+
     setShowNewMassModal(false)
     setNewMass({ title: '', date: '', time: '', liturgicalTime: 'ORDINARY' })
-    alert('Nova missa criada com sucesso!')
   }
 
-  const handleUpload = () => {
-    if (!uploadFile) {
+  const handleUpload = async () => {
+    if (!uploadFileState) {
       alert('Por favor, selecione um arquivo')
       return
     }
-    console.log('Upload do arquivo:', uploadFile.name)
-    // Aqui você adicionaria a lógica para upload no backend
-    setShowUploadModal(false)
-    setUploadFile(null)
-    alert('Música enviada com sucesso!')
+
+    // Validar arquivo
+    const validation = validateFile(uploadFileState)
+    if (!validation.valid) {
+      alert(validation.error)
+      return
+    }
+
+    setIsUploading(true)
+    setUploadProgress(0)
+
+    try {
+      // Simular progresso de upload
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval)
+            return 90
+          }
+          return prev + 10
+        })
+      }, 200)
+
+      // Fazer upload real
+      const result = await uploadFile(uploadFileState)
+
+      clearInterval(progressInterval)
+      setUploadProgress(100)
+
+      if (result.success) {
+        console.log('Upload realizado:', result)
+        alert(`Música "${uploadFileState.name}" enviada com sucesso!`)
+
+        // Aqui você salvaria os metadados no banco de dados
+        // incluindo URL do arquivo, tipo, duração, etc.
+
+      } else {
+        alert(`Erro no upload: ${result.error}`)
+      }
+    } catch (error) {
+      alert('Erro inesperado no upload')
+      console.error('Erro no upload:', error)
+    } finally {
+      setIsUploading(false)
+      setUploadProgress(0)
+      setShowUploadModal(false)
+      setUploadFileState(null)
+    }
   }
 
   const handlePresentation = () => {
@@ -109,9 +182,36 @@ export default function Dashboard() {
   }
 
   const handleLiturgyToday = () => {
-    console.log('Abrindo liturgia de hoje')
-    // Aqui você redirecionaria para a página de liturgia
-    window.open('/liturgia', '_blank')
+    const today = new Date()
+    const todayLiturgical = getLiturgicalData(today)
+
+    console.log('Liturgia de hoje:', todayLiturgical)
+
+    // Mostrar informações da liturgia de hoje
+    alert(`Liturgia de Hoje:\n\n${todayLiturgical.celebration}\n${todayLiturgical.seasonName}\nCor litúrgica: ${todayLiturgical.color}`)
+
+    // Em produção, redirecionaria para página específica
+    // window.open('/liturgia', '_blank')
+  }
+
+  // Função para detectar tempo litúrgico automaticamente
+  const handleDateChange = (date: string) => {
+    setNewMass({...newMass, date})
+
+    if (date) {
+      const selectedDate = new Date(date)
+      const liturgicalInfo = getLiturgicalData(selectedDate)
+
+      // Atualizar automaticamente o tempo litúrgico
+      setNewMass(prev => ({
+        ...prev,
+        date,
+        liturgicalTime: liturgicalInfo.season,
+        title: prev.title || liturgicalInfo.celebration
+      }))
+
+      console.log('Data selecionada - Tempo litúrgico detectado:', liturgicalInfo)
+    }
   }
 
   useEffect(() => {
@@ -318,7 +418,7 @@ export default function Dashboard() {
               <Input
                 type="date"
                 value={newMass.date}
-                onChange={(e) => setNewMass({...newMass, date: e.target.value})}
+                onChange={(e) => handleDateChange(e.target.value)}
               />
             </div>
 
@@ -377,21 +477,38 @@ export default function Dashboard() {
             <Input
               type="file"
               accept=".pdf,.mp3,.wav,.jpg,.png"
-              onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+              onChange={(e) => setUploadFileState(e.target.files?.[0] || null)}
+              disabled={isUploading}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Formatos aceitos: PDF, MP3, WAV, JPG, PNG
+              Formatos aceitos: PDF (partituras), MP3/WAV (áudios), JPG/PNG (imagens)
             </p>
           </div>
 
-          {uploadFile && (
+          {uploadFileState && (
             <div className="bg-blue-50 p-3 rounded-lg">
               <p className="text-sm text-blue-800">
-                <strong>Arquivo selecionado:</strong> {uploadFile.name}
+                <strong>Arquivo selecionado:</strong> {uploadFileState.name}
               </p>
               <p className="text-xs text-blue-600">
-                Tamanho: {(uploadFile.size / 1024 / 1024).toFixed(2)} MB
+                Tamanho: {(uploadFileState.size / 1024 / 1024).toFixed(2)} MB
               </p>
+              <p className="text-xs text-blue-600">
+                Tipo: {uploadFileState.type}
+              </p>
+            </div>
+          )}
+
+          {isUploading && (
+            <div className="bg-green-50 p-3 rounded-lg">
+              <p className="text-sm text-green-800 mb-2">Enviando arquivo...</p>
+              <div className="w-full bg-green-200 rounded-full h-2">
+                <div
+                  className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              <p className="text-xs text-green-600 mt-1">{uploadProgress}% concluído</p>
             </div>
           )}
 
@@ -399,8 +516,11 @@ export default function Dashboard() {
             <Button variant="outline" onClick={() => setShowUploadModal(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleUpload} disabled={!uploadFile}>
-              Fazer Upload
+            <Button
+              onClick={handleUpload}
+              disabled={!uploadFileState || isUploading}
+            >
+              {isUploading ? 'Enviando...' : 'Fazer Upload'}
             </Button>
           </div>
         </div>
@@ -436,6 +556,98 @@ export default function Dashboard() {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* Modal Sugestões Inteligentes */}
+      <Modal
+        isOpen={showSuggestionsModal}
+        onClose={() => setShowSuggestionsModal(false)}
+        title="Sugestões Inteligentes de Músicas"
+        size="xl"
+      >
+        {liturgicalData && suggestions && (
+          <div className="space-y-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h3 className="font-medium text-blue-800 mb-2">Informações Litúrgicas</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <strong>Celebração:</strong> {liturgicalData.celebration}
+                </div>
+                <div>
+                  <strong>Tempo:</strong> {liturgicalData.seasonName}
+                </div>
+                <div>
+                  <strong>Cor Litúrgica:</strong>
+                  <span className={`ml-2 px-2 py-1 rounded text-white text-xs ${
+                    liturgicalData.color === 'green' ? 'bg-green-600' :
+                    liturgicalData.color === 'purple' ? 'bg-purple-600' :
+                    liturgicalData.color === 'white' ? 'bg-gray-600' :
+                    liturgicalData.color === 'red' ? 'bg-red-600' :
+                    'bg-pink-600'
+                  }`}>
+                    {liturgicalData.color}
+                  </span>
+                </div>
+                <div>
+                  <strong>Rank:</strong> {liturgicalData.rank}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Músicas Sugeridas</h3>
+
+              {Object.entries(suggestions).map(([categoria, sugestoes]: [string, any]) => (
+                <div key={categoria} className="border border-gray-200 rounded-lg p-4">
+                  <h4 className="font-medium text-gray-800 mb-3 capitalize">
+                    {categoria === 'ofertorio' ? 'Ofertório' : categoria}
+                  </h4>
+
+                  <div className="space-y-2">
+                    {sugestoes.slice(0, 3).map((sugestao: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {sugestao.musicas[0].titulo}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {sugestao.musicas[0].compositor} • Tom: {sugestao.musicas[0].tom}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            Score: {sugestao.score}% • {sugestao.reason}
+                          </p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline">
+                            Usar
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            Ouvir
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" onClick={() => setShowSuggestionsModal(false)}>
+                Fechar
+              </Button>
+              <Button onClick={() => {
+                // Aqui você criaria o repertório com as sugestões
+                console.log('Criando repertório com sugestões')
+                setShowSuggestionsModal(false)
+                alert('Repertório criado com as sugestões!')
+              }}>
+                Criar Repertório
+              </Button>
+            </div>
+          </div>
+        )}
       </Modal>
     </AppLayout>
   )

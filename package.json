@@ -22,7 +22,8 @@
     "lucide-react": "^0.263.1",
     "clsx": "^2.0.0",
     "tailwind-merge": "^1.14.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "@vercel/blob": "^0.23.4"
   },
   "devDependencies": {
     "typescript": "^5",
