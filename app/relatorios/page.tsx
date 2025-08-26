@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { BarChart3, Calendar, Download, TrendingUp, Music, Users, FileText } from 'lucide-react';
 
 export default function RelatoriosPage() {
@@ -30,8 +31,9 @@ export default function RelatoriosPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
@@ -201,7 +203,8 @@ export default function RelatoriosPage() {
             <span>Hoje</span>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

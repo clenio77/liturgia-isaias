@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { Calendar, Music, Search, Filter, Plus } from 'lucide-react';
 
 export default function RepertorioPage() {
@@ -40,8 +41,9 @@ export default function RepertorioPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
@@ -147,7 +149,8 @@ export default function RepertorioPage() {
             <p className="text-gray-500">Tente ajustar os filtros ou criar um novo repertório</p>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

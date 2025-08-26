@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { Users, Search, Plus, Edit, Trash2, Shield, Mail, Phone } from 'lucide-react';
 
 export default function UsuariosPage() {
@@ -67,8 +68,9 @@ export default function UsuariosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
@@ -244,7 +246,8 @@ export default function UsuariosPage() {
             <p className="text-gray-500">Tente ajustar os filtros ou adicionar um novo usuário</p>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { Sidebar } from '@/components/layout/sidebar'
+import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatLiturgicalDate, getLiturgicalColor } from '@/lib/utils'
@@ -72,12 +71,8 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <ProtectedRoute>
-      <div className="flex h-screen bg-gray-50">
-        <Sidebar />
-      
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-8">
+    <AppLayout>
+      <div className="p-8">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -223,9 +218,7 @@ export default function Dashboard() {
               </Button>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
-    </ProtectedRoute>
+      </div>
+    </AppLayout>
   )
 }

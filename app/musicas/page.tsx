@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { Music, Search, Upload, Play, Pause, Download, Edit, Trash2 } from 'lucide-react';
 
 export default function MusicasPage() {
@@ -60,8 +61,9 @@ export default function MusicasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
@@ -194,7 +196,8 @@ export default function MusicasPage() {
             <p className="text-gray-500">Tente ajustar os filtros ou adicionar uma nova música</p>
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { Settings, User, Bell, Shield, Database, Palette, Globe } from 'lucide-react';
 
 export default function ConfiguracoesPage() {
@@ -22,8 +23,9 @@ export default function ConfiguracoesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
@@ -265,7 +267,8 @@ export default function ConfiguracoesPage() {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }
