@@ -113,9 +113,16 @@ export default function Dashboard() {
     // Mostrar sugestões para o usuário
     setLiturgicalData(liturgicalInfo)
     setSuggestions(musicSuggestions)
-    setShowSuggestionsModal(true)
 
+    // Fechar modal atual e abrir modal de sugestões
     setShowNewMassModal(false)
+
+    // Pequeno delay para melhor UX
+    setTimeout(() => {
+      setShowSuggestionsModal(true)
+      alert(`🧠 IA DETECTOU:\n\n📅 ${liturgicalInfo.celebration}\n🎨 Tempo: ${liturgicalInfo.seasonName}\n🎵 ${Object.keys(musicSuggestions).length} categorias de músicas sugeridas!\n\nVeja o modal que abriu!`)
+    }, 500)
+
     setNewMass({ title: '', date: '', time: '', liturgicalTime: 'ORDINARY' })
   }
 
@@ -210,6 +217,11 @@ export default function Dashboard() {
         title: prev.title || liturgicalInfo.celebration
       }))
 
+      // Feedback imediato para o usuário
+      setTimeout(() => {
+        alert(`🧠 IA DETECTOU AUTOMATICAMENTE:\n\n📅 ${liturgicalInfo.celebration}\n🎨 ${liturgicalInfo.seasonName}\n🎨 Cor: ${liturgicalInfo.color}\n\nAgora clique em "Criar Missa" para ver as sugestões de músicas!`)
+      }, 300)
+
       console.log('Data selecionada - Tempo litúrgico detectado:', liturgicalInfo)
     }
   }
@@ -233,6 +245,38 @@ export default function Dashboard() {
             <p className="text-gray-600">
               {formatLiturgicalDate(currentDate)}
             </p>
+          </div>
+
+          {/* TESTE DA IA - BANNER GRANDE */}
+          <div className="mb-8 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 text-white p-8 rounded-2xl shadow-2xl">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold mb-4">🧠 IA LITÚRGICA FUNCIONANDO!</h2>
+              <p className="text-xl mb-6 opacity-90">
+                Clique no botão abaixo para testar as sugestões inteligentes
+              </p>
+              <div className="flex justify-center gap-4">
+                <Button
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4"
+                  onClick={() => {
+                    const today = new Date().toISOString().split('T')[0];
+                    handleDateChange(today);
+                    setNewMass(prev => ({...prev, title: 'Teste da IA'}));
+                    setShowNewMassModal(true);
+                  }}
+                >
+                  🎯 TESTAR IA AGORA
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600 text-lg px-8 py-4"
+                  onClick={() => window.open('/demo', '_blank')}
+                >
+                  📊 Ver Demonstração
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* Stats Cards */}
