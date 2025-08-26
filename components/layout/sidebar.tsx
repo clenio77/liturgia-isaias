@@ -19,7 +19,8 @@ import {
   LogOut,
   Shield,
   User as UserIcon,
-  BarChart3
+  BarChart3,
+  Sparkles
 } from 'lucide-react'
 
 const navigation = [
@@ -52,6 +53,12 @@ const navigation = [
     href: '/configuracoes',
     icon: Settings,
     description: 'Configurações pessoais'
+  },
+  {
+    name: '🧠 Demo IA',
+    href: '/demo',
+    icon: Sparkles,
+    description: 'Demonstração da IA Litúrgica'
   }
 ]
 

@@ -348,6 +348,26 @@ export default function Dashboard() {
           {/* Quick Actions */}
           <div className="mt-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
+
+            {/* Banner de Demonstração */}
+            <div className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold mb-1">🧠 IA Litúrgica Ativa!</h3>
+                  <p className="text-sm opacity-90">
+                    Clique em "Nova Missa" → Selecione uma data → Veja sugestões inteligentes!
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  className="bg-white text-blue-600 hover:bg-gray-100"
+                  onClick={() => window.open('/demo', '_blank')}
+                >
+                  Ver Demo
+                </Button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Button
                 className="h-20 flex-col space-y-2"
@@ -394,10 +414,21 @@ export default function Dashboard() {
       <Modal
         isOpen={showNewMassModal}
         onClose={() => setShowNewMassModal(false)}
-        title="Nova Missa"
+        title="Nova Missa - IA Litúrgica"
         size="md"
       >
         <div className="space-y-4">
+          {/* Instruções da IA */}
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
+              🧠 IA Ativa - Como Funciona:
+            </h4>
+            <ol className="text-sm text-blue-700 space-y-1">
+              <li><strong>1.</strong> Selecione uma data → Sistema detecta tempo litúrgico automaticamente</li>
+              <li><strong>2.</strong> Clique "Criar Missa" → IA gera sugestões de músicas inteligentes</li>
+              <li><strong>3.</strong> Veja o modal de sugestões com repertório completo!</li>
+            </ol>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Título da Celebração
@@ -562,7 +593,7 @@ export default function Dashboard() {
       <Modal
         isOpen={showSuggestionsModal}
         onClose={() => setShowSuggestionsModal(false)}
-        title="Sugestões Inteligentes de Músicas"
+        title="🧠 IA Litúrgica - Sugestões Inteligentes"
         size="xl"
       >
         {liturgicalData && suggestions && (
