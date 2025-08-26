@@ -2,12 +2,31 @@
 
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Music, Search, Upload, Play, Pause, Download, Edit, Trash2 } from 'lucide-react';
+import { Modal } from '@/components/ui/modal';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Music, Search, Upload, Play, Pause, Download, Edit, Trash2, Volume2 } from 'lucide-react';
 
 export default function MusicasPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [playingId, setPlayingId] = useState<number | null>(null);
+
+  // Estados para modais
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingMusic, setEditingMusic] = useState<any>(null);
+
+  // Estados para upload
+  const [uploadData, setUploadData] = useState({
+    titulo: '',
+    compositor: '',
+    categoria: 'Entrada',
+    tempo: 'Tempo Comum',
+    tom: 'C',
+    arquivo: null as File | null
+  });
 
   // Dados mock das músicas
   const musicas = [
@@ -52,12 +71,64 @@ export default function MusicasPage() {
     (selectedCategory === '' || musica.categoria === selectedCategory)
   );
 
+  // Funções para ações
   const handlePlay = (id: number) => {
     if (playingId === id) {
       setPlayingId(null);
     } else {
       setPlayingId(id);
+      // Simular reprodução de áudio
+      console.log(`Reproduzindo música ID: ${id}`);
     }
+  };
+
+  const handleUpload = () => {
+    if (!uploadData.titulo || !uploadData.compositor || !uploadData.arquivo) {
+      alert('Por favor, preencha todos os campos obrigatórios');
+      return;
+    }
+
+    console.log('Upload da música:', uploadData);
+    // Aqui você adicionaria a lógica para salvar no backend
+
+    setShowUploadModal(false);
+    setUploadData({
+      titulo: '',
+      compositor: '',
+      categoria: 'Entrada',
+      tempo: 'Tempo Comum',
+      tom: 'C',
+      arquivo: null
+    });
+    alert('Música enviada com sucesso!');
+  };
+
+  const handleEdit = (musica: any) => {
+    setEditingMusic(musica);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = () => {
+    console.log('Editando música:', editingMusic);
+    // Aqui você adicionaria a lógica para salvar no backend
+
+    setShowEditModal(false);
+    setEditingMusic(null);
+    alert('Música atualizada com sucesso!');
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('Tem certeza que deseja excluir esta música?')) {
+      console.log('Excluindo música ID:', id);
+      // Aqui você adicionaria a lógica para excluir no backend
+      alert('Música excluída com sucesso!');
+    }
+  };
+
+  const handleDownload = (musica: any) => {
+    console.log('Download da música:', musica.titulo);
+    // Aqui você adicionaria a lógica para download
+    alert(`Iniciando download de: ${musica.titulo}`);
   };
 
   return (
@@ -109,10 +180,13 @@ export default function MusicasPage() {
               <option value="comum">Tempo Comum</option>
             </select>
 
-            <button className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
+            <Button
+              className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+              onClick={() => setShowUploadModal(true)}
+            >
               <Upload className="h-4 w-4" />
               Nova Música
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -160,13 +234,25 @@ export default function MusicasPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <button className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50">
+                    <button
+                      className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50"
+                      onClick={() => handleDownload(musica)}
+                      title="Download"
+                    >
                       <Download className="h-4 w-4" />
                     </button>
-                    <button className="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-50">
+                    <button
+                      className="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-50"
+                      onClick={() => handleEdit(musica)}
+                      title="Editar"
+                    >
                       <Edit className="h-4 w-4" />
                     </button>
-                    <button className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50">
+                    <button
+                      className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50"
+                      onClick={() => handleDelete(musica.id)}
+                      title="Excluir"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -198,6 +284,229 @@ export default function MusicasPage() {
         )}
         </div>
       </div>
+
+      {/* Modais */}
+
+      {/* Modal Upload Música */}
+      <Modal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        title="Nova Música"
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Título da Música *
+              </label>
+              <Input
+                type="text"
+                placeholder="Ex: Vem, Espírito Santo"
+                value={uploadData.titulo}
+                onChange={(e) => setUploadData({...uploadData, titulo: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Compositor *
+              </label>
+              <Input
+                type="text"
+                placeholder="Ex: Pe. José Weber"
+                value={uploadData.compositor}
+                onChange={(e) => setUploadData({...uploadData, compositor: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Categoria
+              </label>
+              <Select
+                value={uploadData.categoria}
+                onChange={(e) => setUploadData({...uploadData, categoria: e.target.value})}
+              >
+                <option value="Entrada">Entrada</option>
+                <option value="Salmo">Salmo</option>
+                <option value="Ofertório">Ofertório</option>
+                <option value="Comunhão">Comunhão</option>
+                <option value="Final">Final</option>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tempo Litúrgico
+              </label>
+              <Select
+                value={uploadData.tempo}
+                onChange={(e) => setUploadData({...uploadData, tempo: e.target.value})}
+              >
+                <option value="Tempo Comum">Tempo Comum</option>
+                <option value="Advento">Advento</option>
+                <option value="Natal">Natal</option>
+                <option value="Quaresma">Quaresma</option>
+                <option value="Páscoa">Páscoa</option>
+                <option value="Pentecostes">Pentecostes</option>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tom
+              </label>
+              <Select
+                value={uploadData.tom}
+                onChange={(e) => setUploadData({...uploadData, tom: e.target.value})}
+              >
+                <option value="C">C (Dó)</option>
+                <option value="D">D (Ré)</option>
+                <option value="E">E (Mi)</option>
+                <option value="F">F (Fá)</option>
+                <option value="G">G (Sol)</option>
+                <option value="A">A (Lá)</option>
+                <option value="B">B (Si)</option>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Arquivo da Música *
+            </label>
+            <Input
+              type="file"
+              accept=".pdf,.mp3,.wav,.jpg,.png"
+              onChange={(e) => setUploadData({...uploadData, arquivo: e.target.files?.[0] || null})}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Formatos aceitos: PDF (partitura), MP3/WAV (áudio), JPG/PNG (imagem)
+            </p>
+          </div>
+
+          {uploadData.arquivo && (
+            <div className="bg-purple-50 p-3 rounded-lg">
+              <p className="text-sm text-purple-800">
+                <strong>Arquivo selecionado:</strong> {uploadData.arquivo.name}
+              </p>
+              <p className="text-xs text-purple-600">
+                Tamanho: {(uploadData.arquivo.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowUploadModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleUpload}>
+              Salvar Música
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Editar Música */}
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title="Editar Música"
+        size="lg"
+      >
+        {editingMusic && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Título da Música
+                </label>
+                <Input
+                  type="text"
+                  value={editingMusic.titulo}
+                  onChange={(e) => setEditingMusic({...editingMusic, titulo: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Compositor
+                </label>
+                <Input
+                  type="text"
+                  value={editingMusic.compositor}
+                  onChange={(e) => setEditingMusic({...editingMusic, compositor: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Categoria
+                </label>
+                <Select
+                  value={editingMusic.categoria}
+                  onChange={(e) => setEditingMusic({...editingMusic, categoria: e.target.value})}
+                >
+                  <option value="Entrada">Entrada</option>
+                  <option value="Salmo">Salmo</option>
+                  <option value="Ofertório">Ofertório</option>
+                  <option value="Comunhão">Comunhão</option>
+                  <option value="Final">Final</option>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tempo Litúrgico
+                </label>
+                <Select
+                  value={editingMusic.tempo}
+                  onChange={(e) => setEditingMusic({...editingMusic, tempo: e.target.value})}
+                >
+                  <option value="Tempo Comum">Tempo Comum</option>
+                  <option value="Advento">Advento</option>
+                  <option value="Natal">Natal</option>
+                  <option value="Quaresma">Quaresma</option>
+                  <option value="Páscoa">Páscoa</option>
+                  <option value="Pentecostes">Pentecostes</option>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tom
+                </label>
+                <Select
+                  value={editingMusic.tom}
+                  onChange={(e) => setEditingMusic({...editingMusic, tom: e.target.value})}
+                >
+                  <option value="C">C (Dó)</option>
+                  <option value="D">D (Ré)</option>
+                  <option value="E">E (Mi)</option>
+                  <option value="F">F (Fá)</option>
+                  <option value="G">G (Sol)</option>
+                  <option value="A">A (Lá)</option>
+                  <option value="B">B (Si)</option>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSaveEdit}>
+                Salvar Alterações
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </AppLayout>
   );
 }

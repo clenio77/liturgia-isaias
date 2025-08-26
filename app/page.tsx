@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/modal'
+import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatLiturgicalDate, getLiturgicalColor } from '@/lib/utils'
 import {
@@ -61,6 +64,55 @@ const mockUpcomingMasses = [
 export default function Dashboard() {
   const { user, isAdmin } = useAuth()
   const [currentDate, setCurrentDate] = useState(new Date())
+
+  // Estados para modais
+  const [showNewMassModal, setShowNewMassModal] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [showPresentationModal, setShowPresentationModal] = useState(false)
+
+  // Estados para formulários
+  const [newMass, setNewMass] = useState({
+    title: '',
+    date: '',
+    time: '',
+    liturgicalTime: 'ORDINARY'
+  })
+
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+
+  // Funções para ações rápidas
+  const handleNewMass = () => {
+    console.log('Nova missa criada:', newMass)
+    // Aqui você adicionaria a lógica para salvar no backend
+    setShowNewMassModal(false)
+    setNewMass({ title: '', date: '', time: '', liturgicalTime: 'ORDINARY' })
+    alert('Nova missa criada com sucesso!')
+  }
+
+  const handleUpload = () => {
+    if (!uploadFile) {
+      alert('Por favor, selecione um arquivo')
+      return
+    }
+    console.log('Upload do arquivo:', uploadFile.name)
+    // Aqui você adicionaria a lógica para upload no backend
+    setShowUploadModal(false)
+    setUploadFile(null)
+    alert('Música enviada com sucesso!')
+  }
+
+  const handlePresentation = () => {
+    console.log('Iniciando modo apresentação')
+    // Aqui você redirecionaria para a página de apresentação
+    window.open('/apresentacao', '_blank')
+    setShowPresentationModal(false)
+  }
+
+  const handleLiturgyToday = () => {
+    console.log('Abrindo liturgia de hoje')
+    // Aqui você redirecionaria para a página de liturgia
+    window.open('/liturgia', '_blank')
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -197,28 +249,194 @@ export default function Dashboard() {
           <div className="mt-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button className="h-20 flex-col space-y-2" variant="outline">
+              <Button
+                className="h-20 flex-col space-y-2"
+                variant="outline"
+                onClick={() => setShowNewMassModal(true)}
+              >
                 <Calendar className="h-6 w-6" />
                 <span>Nova Missa</span>
               </Button>
-              
-              <Button className="h-20 flex-col space-y-2" variant="outline">
+
+              <Button
+                className="h-20 flex-col space-y-2"
+                variant="outline"
+                onClick={() => setShowUploadModal(true)}
+              >
                 <Upload className="h-6 w-6" />
                 <span>Upload Música</span>
               </Button>
-              
-              <Button className="h-20 flex-col space-y-2" variant="outline">
+
+              <Button
+                className="h-20 flex-col space-y-2"
+                variant="outline"
+                onClick={() => setShowPresentationModal(true)}
+              >
                 <Monitor className="h-6 w-6" />
                 <span>Apresentação</span>
               </Button>
-              
-              <Button className="h-20 flex-col space-y-2" variant="outline">
+
+              <Button
+                className="h-20 flex-col space-y-2"
+                variant="outline"
+                onClick={handleLiturgyToday}
+              >
                 <BookOpen className="h-6 w-6" />
                 <span>Liturgia Hoje</span>
               </Button>
             </div>
           </div>
       </div>
+
+      {/* Modais */}
+
+      {/* Modal Nova Missa */}
+      <Modal
+        isOpen={showNewMassModal}
+        onClose={() => setShowNewMassModal(false)}
+        title="Nova Missa"
+        size="md"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Título da Celebração
+            </label>
+            <Input
+              type="text"
+              placeholder="Ex: 21º Domingo do Tempo Comum"
+              value={newMass.title}
+              onChange={(e) => setNewMass({...newMass, title: e.target.value})}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Data
+              </label>
+              <Input
+                type="date"
+                value={newMass.date}
+                onChange={(e) => setNewMass({...newMass, date: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Horário
+              </label>
+              <Input
+                type="time"
+                value={newMass.time}
+                onChange={(e) => setNewMass({...newMass, time: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tempo Litúrgico
+            </label>
+            <Select
+              value={newMass.liturgicalTime}
+              onChange={(e) => setNewMass({...newMass, liturgicalTime: e.target.value})}
+            >
+              <option value="ORDINARY">Tempo Comum</option>
+              <option value="ADVENT">Advento</option>
+              <option value="CHRISTMAS">Natal</option>
+              <option value="LENT">Quaresma</option>
+              <option value="EASTER">Páscoa</option>
+              <option value="SPECIAL">Especial</option>
+            </Select>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowNewMassModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleNewMass}>
+              Criar Missa
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Upload Música */}
+      <Modal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        title="Upload de Música"
+        size="md"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Selecionar Arquivo
+            </label>
+            <Input
+              type="file"
+              accept=".pdf,.mp3,.wav,.jpg,.png"
+              onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Formatos aceitos: PDF, MP3, WAV, JPG, PNG
+            </p>
+          </div>
+
+          {uploadFile && (
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Arquivo selecionado:</strong> {uploadFile.name}
+              </p>
+              <p className="text-xs text-blue-600">
+                Tamanho: {(uploadFile.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowUploadModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleUpload} disabled={!uploadFile}>
+              Fazer Upload
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Apresentação */}
+      <Modal
+        isOpen={showPresentationModal}
+        onClose={() => setShowPresentationModal(false)}
+        title="Modo Apresentação"
+        size="md"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600">
+            O modo apresentação abrirá uma nova janela otimizada para projeção durante a missa.
+          </p>
+
+          <div className="bg-yellow-50 p-4 rounded-lg">
+            <h4 className="font-medium text-yellow-800 mb-2">Dicas:</h4>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• Use F11 para tela cheia</li>
+              <li>• Conecte o projetor antes de iniciar</li>
+              <li>• Teste o áudio previamente</li>
+            </ul>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowPresentationModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handlePresentation}>
+              Iniciar Apresentação
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </AppLayout>
   )
 }

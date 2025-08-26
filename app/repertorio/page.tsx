@@ -2,12 +2,33 @@
 
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Calendar, Music, Search, Filter, Plus } from 'lucide-react';
+import { Modal } from '@/components/ui/modal';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Calendar, Music, Search, Filter, Plus, Edit, Copy } from 'lucide-react';
 
 export default function RepertorioPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+
+  // Estados para modais
+  const [showNewRepertorioModal, setShowNewRepertorioModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingRepertorio, setEditingRepertorio] = useState<any>(null);
+
+  // Estados para novo repertório
+  const [newRepertorio, setNewRepertorio] = useState({
+    data: '',
+    domingo: '',
+    tempo: 'Tempo Comum',
+    entrada: '',
+    salmo: '',
+    ofertorio: '',
+    comunhao: '',
+    final: ''
+  });
 
   // Dados mock do repertório
   const repertorios = [
@@ -35,10 +56,66 @@ export default function RepertorioPage() {
     }
   ];
 
-  const filteredRepertorios = repertorios.filter(rep => 
+  const filteredRepertorios = repertorios.filter(rep =>
     rep.domingo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     rep.tempo.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Funções para ações
+  const handleNewRepertorio = () => {
+    if (!newRepertorio.data || !newRepertorio.domingo) {
+      alert('Por favor, preencha os campos obrigatórios');
+      return;
+    }
+
+    console.log('Novo repertório criado:', newRepertorio);
+    // Aqui você adicionaria a lógica para salvar no backend
+
+    setShowNewRepertorioModal(false);
+    setNewRepertorio({
+      data: '',
+      domingo: '',
+      tempo: 'Tempo Comum',
+      entrada: '',
+      salmo: '',
+      ofertorio: '',
+      comunhao: '',
+      final: ''
+    });
+    alert('Repertório criado com sucesso!');
+  };
+
+  const handleEdit = (repertorio: any) => {
+    setEditingRepertorio(repertorio);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = () => {
+    console.log('Editando repertório:', editingRepertorio);
+    // Aqui você adicionaria a lógica para salvar no backend
+
+    setShowEditModal(false);
+    setEditingRepertorio(null);
+    alert('Repertório atualizado com sucesso!');
+  };
+
+  const handleUse = (repertorio: any) => {
+    console.log('Usando repertório:', repertorio.domingo);
+    // Aqui você redirecionaria para a página de apresentação com este repertório
+    alert(`Repertório "${repertorio.domingo}" selecionado para uso!`);
+  };
+
+  const handleCopy = (repertorio: any) => {
+    const newCopy = {
+      ...repertorio,
+      data: '',
+      domingo: `${repertorio.domingo} (Cópia)`
+    };
+    console.log('Copiando repertório:', newCopy);
+    // Aqui você abriria o modal de novo repertório com os dados copiados
+    setNewRepertorio(newCopy);
+    setShowNewRepertorioModal(true);
+  };
 
   return (
     <AppLayout>
@@ -90,10 +167,13 @@ export default function RepertorioPage() {
               <option value="comum">Tempo Comum</option>
             </select>
 
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <Button
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              onClick={() => setShowNewRepertorioModal(true)}
+            >
               <Plus className="h-4 w-4" />
               Novo Repertório
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -107,12 +187,33 @@ export default function RepertorioPage() {
                   <p className="text-gray-600">{repertorio.tempo} • {new Date(repertorio.data).toLocaleDateString('pt-BR')}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button className="text-blue-600 hover:text-blue-800 px-3 py-1 rounded-lg border border-blue-200 hover:bg-blue-50">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-blue-600 hover:text-blue-800 border-blue-200 hover:bg-blue-50"
+                    onClick={() => handleEdit(repertorio)}
+                  >
+                    <Edit className="h-3 w-3 mr-1" />
                     Editar
-                  </button>
-                  <button className="text-green-600 hover:text-green-800 px-3 py-1 rounded-lg border border-green-200 hover:bg-green-50">
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-green-600 hover:text-green-800 border-green-200 hover:bg-green-50"
+                    onClick={() => handleUse(repertorio)}
+                  >
+                    <Music className="h-3 w-3 mr-1" />
                     Usar
-                  </button>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-purple-600 hover:text-purple-800 border-purple-200 hover:bg-purple-50"
+                    onClick={() => handleCopy(repertorio)}
+                  >
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copiar
+                  </Button>
                 </div>
               </div>
 
@@ -151,6 +252,258 @@ export default function RepertorioPage() {
         )}
         </div>
       </div>
+
+      {/* Modais */}
+
+      {/* Modal Novo Repertório */}
+      <Modal
+        isOpen={showNewRepertorioModal}
+        onClose={() => setShowNewRepertorioModal(false)}
+        title="Novo Repertório"
+        size="xl"
+      >
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Data da Celebração *
+              </label>
+              <Input
+                type="date"
+                value={newRepertorio.data}
+                onChange={(e) => setNewRepertorio({...newRepertorio, data: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Domingo/Celebração *
+              </label>
+              <Input
+                type="text"
+                placeholder="Ex: 21º Domingo do Tempo Comum"
+                value={newRepertorio.domingo}
+                onChange={(e) => setNewRepertorio({...newRepertorio, domingo: e.target.value})}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tempo Litúrgico
+            </label>
+            <Select
+              value={newRepertorio.tempo}
+              onChange={(e) => setNewRepertorio({...newRepertorio, tempo: e.target.value})}
+            >
+              <option value="Tempo Comum">Tempo Comum</option>
+              <option value="Advento">Advento</option>
+              <option value="Natal">Natal</option>
+              <option value="Quaresma">Quaresma</option>
+              <option value="Páscoa">Páscoa</option>
+              <option value="Pentecostes">Pentecostes</option>
+            </Select>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-gray-900">Músicas do Repertório</h3>
+
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Música de Entrada
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Nome da música de entrada"
+                  value={newRepertorio.entrada}
+                  onChange={(e) => setNewRepertorio({...newRepertorio, entrada: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Salmo Responsorial
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Salmo ou música responsorial"
+                  value={newRepertorio.salmo}
+                  onChange={(e) => setNewRepertorio({...newRepertorio, salmo: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Música do Ofertório
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Nome da música do ofertório"
+                  value={newRepertorio.ofertorio}
+                  onChange={(e) => setNewRepertorio({...newRepertorio, ofertorio: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Música da Comunhão
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Nome da música da comunhão"
+                  value={newRepertorio.comunhao}
+                  onChange={(e) => setNewRepertorio({...newRepertorio, comunhao: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Música Final
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Nome da música final"
+                  value={newRepertorio.final}
+                  onChange={(e) => setNewRepertorio({...newRepertorio, final: e.target.value})}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="outline" onClick={() => setShowNewRepertorioModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleNewRepertorio}>
+              Criar Repertório
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Editar Repertório */}
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title="Editar Repertório"
+        size="xl"
+      >
+        {editingRepertorio && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data da Celebração
+                </label>
+                <Input
+                  type="date"
+                  value={editingRepertorio.data}
+                  onChange={(e) => setEditingRepertorio({...editingRepertorio, data: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Domingo/Celebração
+                </label>
+                <Input
+                  type="text"
+                  value={editingRepertorio.domingo}
+                  onChange={(e) => setEditingRepertorio({...editingRepertorio, domingo: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tempo Litúrgico
+              </label>
+              <Select
+                value={editingRepertorio.tempo}
+                onChange={(e) => setEditingRepertorio({...editingRepertorio, tempo: e.target.value})}
+              >
+                <option value="Tempo Comum">Tempo Comum</option>
+                <option value="Advento">Advento</option>
+                <option value="Natal">Natal</option>
+                <option value="Quaresma">Quaresma</option>
+                <option value="Páscoa">Páscoa</option>
+                <option value="Pentecostes">Pentecostes</option>
+              </Select>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Músicas do Repertório</h3>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Música de Entrada
+                  </label>
+                  <Input
+                    type="text"
+                    value={editingRepertorio.entrada}
+                    onChange={(e) => setEditingRepertorio({...editingRepertorio, entrada: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Salmo Responsorial
+                  </label>
+                  <Input
+                    type="text"
+                    value={editingRepertorio.salmo}
+                    onChange={(e) => setEditingRepertorio({...editingRepertorio, salmo: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Música do Ofertório
+                  </label>
+                  <Input
+                    type="text"
+                    value={editingRepertorio.ofertorio}
+                    onChange={(e) => setEditingRepertorio({...editingRepertorio, ofertorio: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Música da Comunhão
+                  </label>
+                  <Input
+                    type="text"
+                    value={editingRepertorio.comunhao}
+                    onChange={(e) => setEditingRepertorio({...editingRepertorio, comunhao: e.target.value})}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Música Final
+                  </label>
+                  <Input
+                    type="text"
+                    value={editingRepertorio.final}
+                    onChange={(e) => setEditingRepertorio({...editingRepertorio, final: e.target.value})}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleSaveEdit}>
+                Salvar Alterações
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </AppLayout>
   );
 }

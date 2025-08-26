@@ -2,11 +2,16 @@
 
 import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { BarChart3, Calendar, Download, TrendingUp, Music, Users, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { BarChart3, Calendar, Download, TrendingUp, Music, Users, FileText, Filter, Printer } from 'lucide-react';
 
 export default function RelatoriosPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('mes');
   const [selectedReport, setSelectedReport] = useState('geral');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   // Dados mock para relatórios
   const stats = {
@@ -30,6 +35,60 @@ export default function RelatoriosPage() {
     { tempo: 'Quaresma', quantidade: 1 }
   ];
 
+  // Funções para ações
+  const handleExportPDF = () => {
+    console.log('Exportando relatório em PDF:', {
+      period: selectedPeriod,
+      report: selectedReport,
+      startDate,
+      endDate
+    });
+
+    // Simular geração de PDF
+    const reportName = `relatorio_${selectedReport}_${selectedPeriod}.pdf`;
+    alert(`Gerando relatório: ${reportName}\n\nO download iniciará em breve...`);
+
+    // Aqui você adicionaria a lógica real de geração de PDF
+    // Por exemplo, usando bibliotecas como jsPDF ou chamando uma API
+  };
+
+  const handleExportExcel = () => {
+    console.log('Exportando relatório em Excel:', {
+      period: selectedPeriod,
+      report: selectedReport,
+      startDate,
+      endDate
+    });
+
+    const reportName = `relatorio_${selectedReport}_${selectedPeriod}.xlsx`;
+    alert(`Gerando planilha: ${reportName}\n\nO download iniciará em breve...`);
+  };
+
+  const handlePrint = () => {
+    console.log('Imprimindo relatório');
+    window.print();
+  };
+
+  const handleApplyFilters = () => {
+    console.log('Aplicando filtros:', {
+      period: selectedPeriod,
+      report: selectedReport,
+      startDate,
+      endDate
+    });
+
+    // Aqui você atualizaria os dados baseado nos filtros
+    alert('Filtros aplicados! Dados atualizados.');
+  };
+
+  const handleResetFilters = () => {
+    setSelectedPeriod('mes');
+    setSelectedReport('geral');
+    setStartDate('');
+    setEndDate('');
+    alert('Filtros resetados!');
+  };
+
   return (
     <AppLayout>
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-6">
@@ -45,38 +104,89 @@ export default function RelatoriosPage() {
 
         {/* Filtros */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <select
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <Select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="semana">Última Semana</option>
               <option value="mes">Último Mês</option>
               <option value="trimestre">Último Trimestre</option>
               <option value="ano">Último Ano</option>
-            </select>
+              <option value="personalizado">Período Personalizado</option>
+            </Select>
 
-            <select
+            <Select
               value={selectedReport}
               onChange={(e) => setSelectedReport(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             >
               <option value="geral">Relatório Geral</option>
               <option value="musicas">Músicas Mais Usadas</option>
               <option value="usuarios">Atividade de Usuários</option>
               <option value="celebracoes">Celebrações por Tempo</option>
-            </select>
+            </Select>
 
-            <input
+            <Input
               type="date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Data inicial"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              disabled={selectedPeriod !== 'personalizado'}
             />
 
-            <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+            <Input
+              type="date"
+              placeholder="Data final"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              disabled={selectedPeriod !== 'personalizado'}
+            />
+
+            <Button
+              className="bg-green-600 text-white hover:bg-green-700 flex items-center gap-2"
+              onClick={handleApplyFilters}
+            >
+              <Filter className="h-4 w-4" />
+              Aplicar
+            </Button>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleResetFilters}
+                className="flex-1"
+              >
+                Limpar
+              </Button>
+            </div>
+          </div>
+
+          {/* Botões de Exportação */}
+          <div className="flex gap-3 mt-4 pt-4 border-t border-gray-200">
+            <Button
+              className="bg-red-600 text-white hover:bg-red-700 flex items-center gap-2"
+              onClick={handleExportPDF}
+            >
               <Download className="h-4 w-4" />
-              Exportar PDF
-            </button>
+              PDF
+            </Button>
+
+            <Button
+              className="bg-green-600 text-white hover:bg-green-700 flex items-center gap-2"
+              onClick={handleExportExcel}
+            >
+              <FileText className="h-4 w-4" />
+              Excel
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={handlePrint}
+              className="flex items-center gap-2"
+            >
+              <Printer className="h-4 w-4" />
+              Imprimir
+            </Button>
           </div>
         </div>
 
