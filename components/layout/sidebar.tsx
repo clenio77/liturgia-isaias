@@ -18,7 +18,8 @@ import {
   Cross,
   LogOut,
   Shield,
-  User as UserIcon
+  User as UserIcon,
+  BarChart3
 } from 'lucide-react'
 
 const navigation = [
@@ -35,43 +36,31 @@ const navigation = [
     description: 'Biblioteca de músicas'
   },
   {
-    name: 'Missas',
-    href: '/missas',
+    name: 'Repertório',
+    href: '/repertorio',
     icon: Calendar,
-    description: 'Planejamento de missas'
+    description: 'Repertório litúrgico'
   },
   {
-    name: 'Upload',
-    href: '/upload',
-    icon: Upload,
-    description: 'Adicionar novas músicas'
+    name: 'Relatórios',
+    href: '/relatorios',
+    icon: BarChart3,
+    description: 'Estatísticas e relatórios'
   },
   {
-    name: 'Apresentação',
-    href: '/apresentacao',
-    icon: Monitor,
-    description: 'Modo apresentação'
-  },
-  {
-    name: 'Liturgia',
-    href: '/liturgia',
-    icon: BookOpen,
-    description: 'Calendário litúrgico'
+    name: 'Configurações',
+    href: '/configuracoes',
+    icon: Settings,
+    description: 'Configurações pessoais'
   }
 ]
 
 const adminNavigation = [
   {
     name: 'Usuários',
-    href: '/admin/usuarios',
+    href: '/usuarios',
     icon: Users,
     description: 'Gerenciar usuários'
-  },
-  {
-    name: 'Configurações',
-    href: '/admin/configuracoes',
-    icon: Settings,
-    description: 'Configurações do sistema'
   }
 ]
 
