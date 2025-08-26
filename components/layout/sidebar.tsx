@@ -61,6 +61,12 @@ const navigation = [
     href: '/demo',
     icon: Sparkles,
     description: 'Demonstração da IA Litúrgica'
+  },
+  {
+    name: 'Leituras',
+    href: '/leituras',
+    icon: BookOpen,
+    description: 'Leituras litúrgicas diárias'
   }
 ]
 

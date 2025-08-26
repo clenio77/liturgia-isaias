@@ -251,6 +251,9 @@ export function getSuggestions(criteria: SuggestionCriteria): SuggestionResult[]
       sources: generateAudioSources(music.titulo, music.compositor)
     };
 
+    // Debug: Log das fontes de áudio
+    console.log(`🎵 Áudio para "${music.titulo}" (ID: ${music.id}):`, audioSources);
+
     return {
       musicas: [music],
       score: Math.min(score, 100),

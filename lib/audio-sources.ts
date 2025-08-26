@@ -21,18 +21,19 @@ export const musicAudioDatabase: MusicAudioSources[] = [
     artist: 'Pe. José Weber',
     sources: [
       {
-        type: 'youtube',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Exemplo
+        type: 'local',
+        url: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3', // Áudio de exemplo funcional
         title: 'Vem, Espírito Santo - Pe. José Weber',
         duration: 225
       },
       {
-        type: 'local',
-        url: '/audio/vem-espirito-santo.mp3',
+        type: 'youtube',
+        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        title: 'Vem, Espírito Santo - Pe. José Weber',
         duration: 225
       }
     ],
-    preview: '/audio/previews/vem-espirito-santo-preview.mp3',
+    preview: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
     thumbnail: '/images/music/vem-espirito-santo.jpg'
   },
   
@@ -42,18 +43,19 @@ export const musicAudioDatabase: MusicAudioSources[] = [
     artist: 'Tradicional',
     sources: [
       {
-        type: 'youtube',
-        url: 'https://www.youtube.com/watch?v=exemplo-cristo-ressuscitou',
+        type: 'local',
+        url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav', // Áudio de exemplo funcional
         title: 'Cristo Ressuscitou - Canto Tradicional',
         duration: 180
       },
       {
-        type: 'local',
-        url: '/audio/cristo-ressuscitou.mp3',
+        type: 'youtube',
+        url: 'https://www.youtube.com/watch?v=exemplo-cristo-ressuscitou',
+        title: 'Cristo Ressuscitou - Canto Tradicional',
         duration: 180
       }
     ],
-    preview: '/audio/previews/cristo-ressuscitou-preview.mp3'
+    preview: 'https://www.soundjay.com/misc/sounds/church-bells-1.wav'
   },
 
   {
@@ -82,14 +84,15 @@ export const musicAudioDatabase: MusicAudioSources[] = [
     artist: 'Ir. Miria Kolling',
     sources: [
       {
-        type: 'youtube',
-        url: 'https://www.youtube.com/watch?v=exemplo-salmo-33',
+        type: 'local',
+        url: 'https://www.soundjay.com/misc/sounds/bell-ringing-01.wav', // Áudio de exemplo funcional
         title: 'Salmo 33 - Provai e Vede',
         duration: 150
       },
       {
-        type: 'local',
-        url: '/audio/salmo-33-provai-vede.mp3',
+        type: 'youtube',
+        url: 'https://www.youtube.com/watch?v=exemplo-salmo-33',
+        title: 'Salmo 33 - Provai e Vede',
         duration: 150
       }
     ]

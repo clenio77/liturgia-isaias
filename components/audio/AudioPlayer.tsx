@@ -23,12 +23,12 @@ interface AudioPlayerProps {
   compact?: boolean;
 }
 
-export function AudioPlayer({ 
-  sources, 
-  title, 
-  artist, 
-  onPlay, 
-  onPause, 
+export function AudioPlayer({
+  sources,
+  title,
+  artist,
+  onPlay,
+  onPause,
   onEnd,
   autoPlay = false,
   showControls = true,
@@ -46,6 +46,9 @@ export function AudioPlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const currentSource = sources[currentSourceIndex];
+
+  // Debug: Log das fontes recebidas
+  console.log(`🎵 AudioPlayer para "${title}":`, { sources, currentSource });
 
   useEffect(() => {
     const audio = audioRef.current;

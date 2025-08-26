@@ -12,6 +12,7 @@ import { getLiturgicalData, LiturgicalData } from '@/lib/liturgical-calendar'
 import { getCompleteMassSuggestions } from '@/lib/music-suggestions'
 import { uploadFile, validateFile } from '@/lib/upload-service'
 import { AudioPlayer } from '@/components/audio/AudioPlayer'
+import { ReadingsModal } from '@/components/liturgy/ReadingsModal'
 import {
   Calendar,
   Music,
@@ -74,6 +75,7 @@ export default function Dashboard() {
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showPresentationModal, setShowPresentationModal] = useState(false)
   const [showSuggestionsModal, setShowSuggestionsModal] = useState(false)
+  const [showReadingsModal, setShowReadingsModal] = useState(false)
 
   // Estados para formulários
   const [newMass, setNewMass] = useState({
@@ -195,11 +197,8 @@ export default function Dashboard() {
 
     console.log('Liturgia de hoje:', todayLiturgical)
 
-    // Mostrar informações da liturgia de hoje
-    alert(`Liturgia de Hoje:\n\n${todayLiturgical.celebration}\n${todayLiturgical.seasonName}\nCor litúrgica: ${todayLiturgical.color}`)
-
-    // Em produção, redirecionaria para página específica
-    // window.open('/liturgia', '_blank')
+    // Abrir modal de leituras do dia
+    setShowReadingsModal(true)
   }
 
   // Função para detectar tempo litúrgico automaticamente
@@ -448,7 +447,7 @@ export default function Dashboard() {
                 onClick={handleLiturgyToday}
               >
                 <BookOpen className="h-6 w-6" />
-                <span>Liturgia Hoje</span>
+                <span>📖 Leituras de Hoje</span>
               </Button>
             </div>
           </div>
@@ -705,16 +704,25 @@ export default function Dashboard() {
                         </div>
 
                         {/* Player de Áudio */}
-                        {sugestao.audioSources && sugestao.audioSources.sources.length > 0 && (
+                        {sugestao.audioSources && sugestao.audioSources.sources.length > 0 ? (
                           <div className="mt-3 pt-3 border-t border-gray-100">
+                            <div className="mb-2 text-xs text-green-600">
+                              🎵 Áudio disponível ({sugestao.audioSources.sources.length} fonte{sugestao.audioSources.sources.length > 1 ? 's' : ''})
+                            </div>
                             <AudioPlayer
                               sources={sugestao.audioSources.sources}
                               title={sugestao.audioSources.title}
                               artist={sugestao.audioSources.artist}
                               compact={false}
                               showControls={true}
-                              onPlay={() => console.log(`Reproduzindo: ${sugestao.audioSources.title}`)}
+                              onPlay={() => console.log(`🎵 Reproduzindo: ${sugestao.audioSources.title}`)}
                             />
+                          </div>
+                        ) : (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <div className="mb-2 text-xs text-yellow-600">
+                              ⚠️ Debug: audioSources = {JSON.stringify(sugestao.audioSources)}
+                            </div>
                           </div>
                         )}
 
@@ -775,6 +783,13 @@ export default function Dashboard() {
           </div>
         )}
       </Modal>
+
+      {/* Modal Leituras Litúrgicas */}
+      <ReadingsModal
+        isOpen={showReadingsModal}
+        onClose={() => setShowReadingsModal(false)}
+        date={new Date()}
+      />
     </AppLayout>
   )
 }
