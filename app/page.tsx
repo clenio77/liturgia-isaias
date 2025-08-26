@@ -11,6 +11,7 @@ import { formatLiturgicalDate, getLiturgicalColor } from '@/lib/utils'
 import { getLiturgicalData, LiturgicalData } from '@/lib/liturgical-calendar'
 import { getCompleteMassSuggestions } from '@/lib/music-suggestions'
 import { uploadFile, validateFile } from '@/lib/upload-service'
+import { AudioPlayer } from '@/components/audio/AudioPlayer'
 import {
   Calendar,
   Music,
@@ -236,28 +237,28 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               Dashboard
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               {formatLiturgicalDate(currentDate)}
             </p>
           </div>
 
           {/* TESTE DA IA - BANNER GRANDE */}
-          <div className="mb-8 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 text-white p-8 rounded-2xl shadow-2xl">
+          <div className="mb-6 sm:mb-8 bg-gradient-to-r from-green-500 via-blue-500 to-purple-600 text-white p-4 sm:p-6 lg:p-8 rounded-xl sm:rounded-2xl shadow-2xl">
             <div className="text-center">
-              <h2 className="text-3xl font-bold mb-4">🧠 IA LITÚRGICA FUNCIONANDO!</h2>
-              <p className="text-xl mb-6 opacity-90">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">🧠 IA LITÚRGICA FUNCIONANDO!</h2>
+              <p className="text-sm sm:text-lg lg:text-xl mb-4 sm:mb-6 opacity-90">
                 Clique no botão abaixo para testar as sugestões inteligentes
               </p>
-              <div className="flex justify-center gap-4">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <Button
                   size="lg"
-                  className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4"
+                  className="bg-white text-blue-600 hover:bg-gray-100 text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4"
                   onClick={() => {
                     const today = new Date().toISOString().split('T')[0];
                     handleDateChange(today);
@@ -270,7 +271,7 @@ export default function Dashboard() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600 text-lg px-8 py-4"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-blue-600 text-sm sm:text-base lg:text-lg px-4 sm:px-6 lg:px-8 py-3 sm:py-4"
                   onClick={() => window.open('/demo', '_blank')}
                 >
                   📊 Ver Demonstração
@@ -280,15 +281,15 @@ export default function Dashboard() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-100 rounded-lg">
-                  <Music className="h-6 w-6 text-blue-600" />
+                  <Music className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total de Músicas</p>
-                  <p className="text-2xl font-bold text-gray-900">{mockStats.totalSongs}</p>
+                <div className="ml-3 sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total de Músicas</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{mockStats.totalSongs}</p>
                 </div>
               </div>
             </div>
@@ -390,21 +391,22 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
 
             {/* Banner de Demonstração */}
-            <div className="mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg">
-              <div className="flex items-center justify-between">
+            <div className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 sm:p-4 rounded-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <h3 className="font-semibold mb-1">🧠 IA Litúrgica Ativa!</h3>
-                  <p className="text-sm opacity-90">
+                  <h3 className="font-semibold mb-1 text-sm sm:text-base">🧠 IA Litúrgica Ativa!</h3>
+                  <p className="text-xs sm:text-sm opacity-90">
                     Clique em "Nova Missa" → Selecione uma data → Veja sugestões inteligentes!
                   </p>
                 </div>
                 <Button
                   variant="outline"
-                  className="bg-white text-blue-600 hover:bg-gray-100"
+                  size="sm"
+                  className="bg-white text-blue-600 hover:bg-gray-100 text-xs sm:text-sm"
                   onClick={() => window.open('/demo', '_blank')}
                 >
                   Ver Demo
@@ -412,7 +414,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <Button
                 className="h-20 flex-col space-y-2"
                 variant="outline"
@@ -678,29 +680,78 @@ export default function Dashboard() {
                     {categoria === 'ofertorio' ? 'Ofertório' : categoria}
                   </h4>
 
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {sugestoes.slice(0, 3).map((sugestao: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {sugestao.musicas[0].titulo}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {sugestao.musicas[0].compositor} • Tom: {sugestao.musicas[0].tom}
-                          </p>
-                          <p className="text-xs text-green-600">
-                            Score: {sugestao.score}% • {sugestao.reason}
-                          </p>
+                      <div key={index} className="border border-gray-200 rounded-lg p-4 bg-white">
+                        {/* Informações da Música */}
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900 text-lg">
+                              {sugestao.musicas[0].titulo}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-1">
+                              {sugestao.musicas[0].compositor} • Tom: {sugestao.musicas[0].tom}
+                            </p>
+                            <p className="text-xs text-green-600 mb-2">
+                              ✨ Score: {sugestao.score}% • {sugestao.reason}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              Usar
+                            </Button>
+                          </div>
                         </div>
 
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            Usar
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            Ouvir
-                          </Button>
-                        </div>
+                        {/* Player de Áudio */}
+                        {sugestao.audioSources && sugestao.audioSources.sources.length > 0 && (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <AudioPlayer
+                              sources={sugestao.audioSources.sources}
+                              title={sugestao.audioSources.title}
+                              artist={sugestao.audioSources.artist}
+                              compact={false}
+                              showControls={true}
+                              onPlay={() => console.log(`Reproduzindo: ${sugestao.audioSources.title}`)}
+                            />
+                          </div>
+                        )}
+
+                        {/* Fallback se não houver áudio */}
+                        {(!sugestao.audioSources || sugestao.audioSources.sources.length === 0) && (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                              <p className="text-sm text-yellow-800 mb-2">
+                                🎵 Áudio não disponível localmente
+                              </p>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    const query = encodeURIComponent(`${sugestao.musicas[0].titulo} ${sugestao.musicas[0].compositor} católica`);
+                                    window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
+                                  }}
+                                  className="text-red-600 border-red-200 hover:bg-red-50"
+                                >
+                                  🎬 YouTube
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    const query = encodeURIComponent(`${sugestao.musicas[0].titulo} ${sugestao.musicas[0].compositor}`);
+                                    window.open(`https://open.spotify.com/search/${query}`, '_blank');
+                                  }}
+                                  className="text-green-600 border-green-200 hover:bg-green-50"
+                                >
+                                  🎵 Spotify
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

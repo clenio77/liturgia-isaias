@@ -2,6 +2,7 @@
 // Baseado em algoritmos de matching e aprendizado
 
 import { LiturgicalData, getMusicSuggestions } from './liturgical-calendar';
+import { getAudioSources, generateAudioSources, MusicAudioSources } from './audio-sources';
 
 export interface Music {
   id: string;
@@ -34,6 +35,7 @@ export interface SuggestionResult {
   musicas: Music[];
   score: number; // 0-100 - quão bem a música se adequa
   reason: string; // explicação da sugestão
+  audioSources?: MusicAudioSources; // fontes de áudio disponíveis
 }
 
 // Base de dados de músicas (em produção viria do banco de dados)
@@ -241,10 +243,19 @@ export function getSuggestions(criteria: SuggestionCriteria): SuggestionResult[]
       }
     }
     
+    // Buscar fontes de áudio para a música
+    const audioSources = getAudioSources(music.id) || {
+      musicId: music.id,
+      title: music.titulo,
+      artist: music.compositor,
+      sources: generateAudioSources(music.titulo, music.compositor)
+    };
+
     return {
       musicas: [music],
       score: Math.min(score, 100),
-      reason: reasons.join('; ')
+      reason: reasons.join('; '),
+      audioSources
     };
   });
   

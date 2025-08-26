@@ -2,6 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Estilos responsivos personalizados */
+@layer base {
+  /* Melhorar toque em dispositivos móveis */
+  @media (max-width: 1024px) {
+    button, a, input, select, textarea {
+      min-height: 44px; /* Tamanho mínimo recomendado para toque */
+    }
+
+    /* Melhorar espaçamento em telas pequenas */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  /* Estilos para telas muito pequenas */
+  @media (max-width: 640px) {
+    /* Reduzir padding em cards */
+    .card {
+      padding: 1rem;
+    }
+
+    /* Melhorar legibilidade */
+    body {
+      font-size: 16px; /* Evitar zoom automático no iOS */
+    }
+
+    /* Melhorar modais em mobile */
+    .modal-content {
+      margin: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Componente de overlay responsivo */
+  .mobile-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden;
+  }
+
+  /* Sidebar responsiva */
+  .sidebar-responsive {
+    @apply fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0;
+  }
+
+  .sidebar-open {
+    @apply translate-x-0;
+  }
+
+  .sidebar-closed {
+    @apply -translate-x-full;
+  }
+
+  /* Header mobile */
+  .mobile-header {
+    @apply lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between;
+  }
+
+  /* Botões responsivos */
+  .btn-responsive {
+    @apply px-4 py-2 text-sm font-medium rounded-md transition-colors;
+    @apply sm:px-6 sm:py-3 sm:text-base;
+  }
+
+  /* Grid responsivo */
+  .grid-responsive {
+    @apply grid grid-cols-1 gap-4;
+    @apply sm:grid-cols-2 sm:gap-6;
+    @apply lg:grid-cols-3 lg:gap-8;
+    @apply xl:grid-cols-4;
+  }
+
+  /* Cards responsivos */
+  .card-responsive {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+    @apply sm:p-6;
+    @apply lg:p-8;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

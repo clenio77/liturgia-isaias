@@ -20,7 +20,9 @@ import {
   Shield,
   User as UserIcon,
   BarChart3,
-  Sparkles
+  Sparkles,
+  Menu,
+  X
 } from 'lucide-react'
 
 const navigation = [
@@ -72,25 +74,59 @@ const adminNavigation = [
 ]
 
 interface SidebarProps {
-  isAdmin?: boolean
+  isAdmin?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export function Sidebar({ isAdmin = false }: SidebarProps) {
+export function Sidebar({ isAdmin = false, isOpen = true, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { user, isAdmin: userIsAdmin, logout } = useAuth()
 
+  // Fechar sidebar ao clicar em um link no mobile
+  const handleLinkClick = () => {
+    if (onClose) {
+      onClose();
+    }
+  }
+
   return (
-    <div className="flex flex-col w-64 bg-white shadow-lg">
-      {/* Logo */}
-      <div className="flex items-center justify-center h-16 px-4 bg-primary">
-        <div className="flex items-center space-x-2">
-          <Cross className="h-8 w-8 text-white" />
-          <div className="text-white">
-            <h1 className="text-lg font-bold">Liturgia</h1>
-            <p className="text-xs opacity-90">Isaías</p>
+    <>
+      {/* Overlay para mobile */}
+      {isOpen && onClose && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={cn(
+        "fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        {/* Header com botão de fechar no mobile */}
+        <div className="flex items-center justify-between h-16 px-4 bg-primary">
+          <div className="flex items-center space-x-2">
+            <Cross className="h-8 w-8 text-white" />
+            <div className="text-white">
+              <h1 className="text-lg font-bold">Liturgia</h1>
+              <p className="text-xs opacity-90">Isaías</p>
+            </div>
           </div>
+
+          {/* Botão fechar no mobile */}
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="lg:hidden text-white hover:bg-white/20 p-1"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          )}
         </div>
-      </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 space-y-2">
@@ -98,7 +134,7 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
           {navigation.map((item) => {
             const isActive = pathname === item.href
             return (
-              <Link key={item.name} href={item.href}>
+              <Link key={item.name} href={item.href} onClick={handleLinkClick}>
                 <Button
                   variant={isActive ? "secondary" : "ghost"}
                   className={cn(
@@ -131,7 +167,7 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
               {adminNavigation.map((item) => {
                 const isActive = pathname === item.href
                 return (
-                  <Link key={item.name} href={item.href}>
+                  <Link key={item.name} href={item.href} onClick={handleLinkClick}>
                     <Button
                       variant={isActive ? "secondary" : "ghost"}
                       className={cn(
@@ -195,6 +231,7 @@ export function Sidebar({ isAdmin = false }: SidebarProps) {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   )
 }
