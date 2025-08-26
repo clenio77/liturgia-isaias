@@ -28,8 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       url: blob.url,
       downloadUrl: blob.downloadUrl,
-      pathname: blob.pathname,
-      size: blob.size
+      pathname: blob.pathname
     });
 
   } catch (error) {
