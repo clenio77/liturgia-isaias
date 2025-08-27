@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { DailyReadings, getDailyReadings, getSaintOfTheDay, getLiturgicalColorName } from '@/lib/liturgical-readings';
-import { BookOpen, Calendar, Palette, User, Copy, ExternalLink, RefreshCw } from 'lucide-react';
+import { PastoralResourcesModal } from './PastoralResourcesModal';
+import { BookOpen, Calendar, Palette, User, Copy, ExternalLink, RefreshCw, MessageSquare } from 'lucide-react';
 
 interface ReadingsModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedReading, setSelectedReading] = useState<string>('first');
+  const [showPastoralResources, setShowPastoralResources] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -200,8 +202,16 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
           </div>
           
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
+              onClick={() => setShowPastoralResources(true)}
+              className="flex items-center gap-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Recursos Pastorais
+            </Button>
+            <Button
+              variant="outline"
               onClick={loadReadings}
               className="flex items-center gap-2"
             >
@@ -235,6 +245,16 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
           )}
         </div>
       </div>
+
+      {/* Modal de Recursos Pastorais */}
+      {readings && (
+        <PastoralResourcesModal
+          isOpen={showPastoralResources}
+          onClose={() => setShowPastoralResources(false)}
+          readings={readings}
+          date={date}
+        />
+      )}
     </Modal>
   );
 }

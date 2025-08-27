@@ -21,7 +21,8 @@ import {
   TrendingUp,
   Clock,
   Users,
-  BookOpen
+  BookOpen,
+  MessageSquare
 } from 'lucide-react'
 
 // Mock data - será substituído por dados reais da API
@@ -448,6 +449,18 @@ export default function Dashboard() {
               >
                 <BookOpen className="h-6 w-6" />
                 <span>📖 Leituras de Hoje</span>
+              </Button>
+
+              <Button
+                className="h-20 flex-col space-y-2"
+                variant="outline"
+                onClick={() => {
+                  // Abrir recursos pastorais diretamente
+                  setShowReadingsModal(true);
+                }}
+              >
+                <MessageSquare className="h-6 w-6" />
+                <span>🛠️ Recursos Pastorais</span>
               </Button>
             </div>
           </div>
