@@ -5,7 +5,8 @@ import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { DailyReadings, getDailyReadings, getSaintOfTheDay, getLiturgicalColorName } from '@/lib/liturgical-readings';
 import { PastoralResourcesModal } from './PastoralResourcesModal';
-import { BookOpen, Calendar, Palette, User, Copy, ExternalLink, RefreshCw, MessageSquare } from 'lucide-react';
+import { validateReadingsDate, logReadingsDebug, DateValidationResult } from '@/lib/date-validator';
+import { BookOpen, Calendar, Palette, User, Copy, ExternalLink, RefreshCw, MessageSquare, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface ReadingsModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
   const [error, setError] = useState<string | null>(null);
   const [selectedReading, setSelectedReading] = useState<string>('first');
   const [showPastoralResources, setShowPastoralResources] = useState(false);
+  const [validation, setValidation] = useState<DateValidationResult | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -33,6 +35,17 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
     try {
       const dailyReadings = await getDailyReadings(date);
       setReadings(dailyReadings);
+
+      // Validar se as leituras correspondem à data
+      if (dailyReadings) {
+        logReadingsDebug(dailyReadings, date);
+        const dateValidation = validateReadingsDate(dailyReadings, date);
+        setValidation(dateValidation);
+
+        if (!dateValidation.isValid) {
+          console.warn('⚠️ Possíveis problemas com as leituras:', dateValidation.issues);
+        }
+      }
     } catch (err) {
       setError('Erro ao carregar leituras');
       console.error('Erro ao carregar leituras:', err);
@@ -105,18 +118,18 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="h-4 w-4 text-blue-600" />
                 <span className="font-medium text-gray-900">
-                  {date.toLocaleDateString('pt-BR', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  {date.toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                   })}
                 </span>
               </div>
               <p className="text-sm text-gray-600">{readings.liturgicalDate}</p>
               <p className="text-sm font-medium text-purple-700">{readings.celebration}</p>
             </div>
-            
+
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Palette className="h-4 w-4 text-green-600" />
@@ -124,7 +137,7 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
                   Cor Litúrgica: <span className="text-green-700">{getLiturgicalColorName(readings.color)}</span>
                 </span>
               </div>
-              
+
               {saint && (
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4 text-yellow-600" />
@@ -133,6 +146,33 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
               )}
             </div>
           </div>
+
+          {/* Indicador de validação */}
+          {validation && (
+            <div className="mt-3 pt-3 border-t border-blue-200">
+              {validation.isValid ? (
+                <div className="flex items-center gap-2 text-green-700">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="text-sm">Leituras validadas com sucesso</span>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-yellow-700">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span className="text-sm font-medium">Possíveis inconsistências detectadas</span>
+                  </div>
+                  <div className="text-xs text-yellow-600 space-y-1">
+                    {validation.issues.slice(0, 2).map((issue, index) => (
+                      <div key={index}>• {issue}</div>
+                    ))}
+                    {validation.issues.length > 2 && (
+                      <div>• E mais {validation.issues.length - 2} problema(s)...</div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Navegação das leituras */}

@@ -2,6 +2,7 @@
 // Integra múltiplas fontes de leituras católicas
 
 import { scrapeReadings, getCachedReadings, setCachedReadings } from './readings-scraper';
+import { fetchCNBBReadings, validateReadings } from './cnbb-scraper';
 
 export interface LiturgicalReading {
   reference: string;
@@ -122,34 +123,8 @@ const readingsDatabase: Record<string, DailyReadings> = {
     ]
   },
 
-  // Hoje - Leituras dinâmicas baseadas na data atual
-  [new Date().toISOString().split('T')[0]]: {
-    date: new Date().toISOString().split('T')[0],
-    liturgicalDate: 'Terça-feira da 34ª Semana do Tempo Comum',
-    season: 'Tempo Comum',
-    celebration: 'Dia de Semana',
-    color: 'verde',
-    readings: [
-      {
-        reference: 'Ap 14,14-19',
-        title: 'Primeira Leitura',
-        text: 'Eu, João, vi uma nuvem branca e, sentado sobre a nuvem, alguém semelhante a um filho de homem, tendo na cabeça uma coroa de ouro e na mão uma foice afiada. Então saiu do santuário outro anjo, gritando em alta voz para aquele que estava sentado sobre a nuvem: "Lança a tua foice e ceifa, porque chegou a hora de ceifar: a seara da terra está madura!" Aquele que estava sentado sobre a nuvem lançou a sua foice sobre a terra, e a terra foi ceifada. Saiu do santuário que está no céu outro anjo, que também tinha uma foice afiada. E saiu do altar outro anjo, que tinha poder sobre o fogo. Ele gritou em alta voz para aquele que tinha a foice afiada: "Lança a tua foice afiada e colhe os cachos da videira da terra, porque as suas uvas estão maduras!" O anjo lançou a sua foice sobre a terra, colheu a videira da terra e atirou-a no grande lagar da ira de Deus.',
-        type: 'first'
-      },
-      {
-        reference: 'Sl 95(96),10.11-12.13 (R. 13b)',
-        title: 'Salmo Responsorial',
-        text: 'R. Vem julgar a terra o Senhor!\n\nDizei entre as nações: "Reina o Senhor!" Ele firmou o mundo inabalável e governa os povos com justiça.\n\nAlegrem-se os céus, exulte a terra, ressoe o mar e tudo o que ele encerra; rejubilem os campos e quanto neles existe!\n\nRegozijem-se então todas as árvores da floresta na presença do Senhor, porque ele vem, porque ele vem julgar a terra: Ele julgará o universo com justiça e os povos com fidelidade!',
-        type: 'psalm'
-      },
-      {
-        reference: 'Lc 21,5-11',
-        title: 'Evangelho',
-        text: 'Naquele tempo, algumas pessoas falavam a respeito do Templo, como era ornamentado com belas pedras e ofertas votivas. Jesus disse: "Vedes tudo isto? Dias virão em que não ficará pedra sobre pedra: tudo será destruído!" Eles perguntaram: "Mestre, quando acontecerá isso? E qual será o sinal de que estas coisas estão para acontecer?" Jesus respondeu: "Cuidado para não serdes enganados! Porque muitos virão em meu nome, dizendo: \'Sou eu!\' e ainda: \'O tempo está próximo.\' Não sigais essa gente! Quando ouvirdes falar de guerras e revoluções, não fiqueis apavorados. É preciso que isso aconteça primeiro, mas não será logo o fim." E Jesus continuou: "Uma nação se levantará contra outra nação, e um reino contra outro reino. Haverá grandes terremotos, e em vários lugares, fomes e epidemias. Haverá também fatos terríveis e grandes sinais no céu."',
-        type: 'gospel'
-      }
-    ]
-  }
+  // Nota: Leituras dinâmicas são buscadas em tempo real da CNBB
+  // Não usar leituras fixas para "hoje" pois podem estar incorretas
 };
 
 // Função principal para obter leituras do dia
@@ -169,9 +144,23 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
     return readingsDatabase[dateKey];
   }
 
-  // 3. Tentar buscar de APIs externas
+  // 3. Tentar buscar diretamente da CNBB (método principal)
   try {
-    console.log(`🔍 Buscando leituras online para ${dateKey}`);
+    console.log(`🔍 Buscando leituras da CNBB para ${dateKey}`);
+
+    const cnbbReadings = await fetchCNBBReadings(date);
+    if (cnbbReadings && validateReadings(cnbbReadings, date)) {
+      setCachedReadings(date, cnbbReadings);
+      return cnbbReadings;
+    }
+
+  } catch (error) {
+    console.error('Erro no scraping da CNBB:', error);
+  }
+
+  // 4. Tentar APIs alternativas como backup
+  try {
+    console.log(`🔍 Tentando APIs alternativas para ${dateKey}`);
 
     const apiReadings = await fetchFromLiturgiaAPI(date);
     if (apiReadings) {
@@ -186,22 +175,22 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
     }
 
   } catch (error) {
-    console.error('Erro nas APIs:', error);
+    console.error('Erro nas APIs alternativas:', error);
   }
 
-  // 4. Tentar web scraping como último recurso
+  // 5. Tentar web scraping genérico como último recurso
   try {
-    console.log(`🕷️ Tentando web scraping para ${dateKey}`);
+    console.log(`🕷️ Tentando web scraping genérico para ${dateKey}`);
     const scrapedReadings = await scrapeReadings(date);
     if (scrapedReadings) {
       setCachedReadings(date, scrapedReadings);
       return scrapedReadings;
     }
   } catch (error) {
-    console.error('Erro no web scraping:', error);
+    console.error('Erro no web scraping genérico:', error);
   }
 
-  // 5. Fallback: Gerar leituras baseadas no calendário litúrgico
+  // 6. Fallback: Gerar leituras baseadas no calendário litúrgico
   console.log(`📝 Gerando fallback para ${dateKey}`);
   const fallbackReadings = generateFallbackReadings(date);
   setCachedReadings(date, fallbackReadings);
