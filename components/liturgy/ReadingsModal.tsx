@@ -215,11 +215,19 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
         </div>
 
         {/* Rodapé informativo */}
-        <div className="text-xs text-gray-500 text-center pt-2 border-t">
+        <div className="text-xs text-gray-500 text-center pt-2 border-t space-y-1">
           <p>
-            📖 Leituras baseadas no Lecionário Romano • 
-            Para leituras oficiais, consulte sempre o Missal Romano ou o site da CNBB
+            📖 Leituras obtidas de fontes católicas confiáveis
           </p>
+          <p>
+            🔍 Fontes: CNBB, Aleteia, Paulus, Canção Nova •
+            Para leituras oficiais, consulte sempre o Missal Romano
+          </p>
+          {readings.readings.length > 0 && readings.readings[0].text.includes('não estão disponíveis') && (
+            <p className="text-yellow-600">
+              ⚠️ Leituras de fallback - Recomendamos consultar fontes oficiais
+            </p>
+          )}
         </div>
       </div>
     </Modal>
