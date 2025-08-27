@@ -28,21 +28,29 @@ export async function GET(
     }
 
     console.log(`📖 API: Buscando leituras para ${date}`);
-    
+
     const readings = await getDailyReadings(requestedDate);
-    
+
     if (!readings) {
+      console.log(`❌ API: Leituras não encontradas para ${date}`);
       return NextResponse.json(
-        { error: 'Leituras não encontradas para esta data' },
+        {
+          error: 'Leituras não encontradas para esta data',
+          date: date,
+          message: 'Tente novamente ou consulte fontes oficiais como CNBB'
+        },
         { status: 404 }
       );
     }
 
+    console.log(`✅ API: Retornando ${readings.readings.length} leituras para ${date}`);
+
     // Adicionar headers de cache
     const response = NextResponse.json(readings);
-    response.headers.set('Cache-Control', 'public, max-age=3600'); // Cache por 1 hora
+    response.headers.set('Cache-Control', 'public, max-age=1800'); // Cache por 30 minutos
     response.headers.set('Access-Control-Allow-Origin', '*');
-    
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
     return response;
 
   } catch (error) {

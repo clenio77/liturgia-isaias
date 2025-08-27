@@ -220,12 +220,17 @@ export function ReadingsModal({ isOpen, onClose, date = new Date() }: ReadingsMo
             📖 Leituras obtidas de fontes católicas confiáveis
           </p>
           <p>
-            🔍 Fontes: CNBB, Aleteia, Paulus, Canção Nova •
+            🔍 Fontes: CNBB (scraping), Base Local, Fallback Inteligente •
             Para leituras oficiais, consulte sempre o Missal Romano
           </p>
-          {readings.readings.length > 0 && readings.readings[0].text.includes('não estão disponíveis') && (
+          {readings.readings.length > 0 && readings.readings[0].text.length < 100 && (
             <p className="text-yellow-600">
-              ⚠️ Leituras de fallback - Recomendamos consultar fontes oficiais
+              ⚠️ Leituras resumidas - Para texto completo, acesse CNBB ou Vatican
+            </p>
+          )}
+          {readings.readings.length > 0 && readings.readings[0].text.length > 500 && (
+            <p className="text-green-600">
+              ✅ Leituras completas obtidas com sucesso
             </p>
           )}
         </div>

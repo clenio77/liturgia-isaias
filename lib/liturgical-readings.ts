@@ -55,7 +55,7 @@ const readingsDatabase: Record<string, DailyReadings> = {
   // Natal - 25/12
   '2024-12-25': {
     date: '2024-12-25',
-    liturgicalDate: 'Natal do Senhor',
+    liturgicalDate: 'Natal do Senhor - Missa do Dia',
     season: 'Tempo do Natal',
     celebration: 'Solenidade do Natal',
     color: 'branco',
@@ -63,25 +63,25 @@ const readingsDatabase: Record<string, DailyReadings> = {
       {
         reference: 'Is 52,7-10',
         title: 'Primeira Leitura',
-        text: 'Como são belos, sobre os montes, os pés do mensageiro que anuncia a paz, que traz boas notícias, que anuncia a salvação...',
+        text: 'Como são belos, sobre os montes, os pés do mensageiro que anuncia a paz, que traz boas notícias, que anuncia a salvação, que diz a Sião: "O teu Deus reina!" Escuta! Os teus vigias levantam a voz e juntos exultam de alegria, porque veem com os próprios olhos o Senhor que volta a Sião. Rompei em gritos de alegria, ruínas de Jerusalém! Porque o Senhor consolou o seu povo, resgatou Jerusalém. O Senhor mostrou o seu braço santo aos olhos de todas as nações, e todos os confins da terra verão a salvação do nosso Deus.',
         type: 'first'
       },
       {
         reference: 'Sl 97(98),1.2-3ab.3cd-4.5-6 (R. 3cd)',
         title: 'Salmo Responsorial',
-        text: 'R. Os confins do universo contemplaram a salvação do nosso Deus.\n\nCantai ao Senhor Deus um canto novo, porque ele fez prodígios!',
+        text: 'R. Os confins do universo contemplaram a salvação do nosso Deus.\n\nCantai ao Senhor Deus um canto novo, porque ele fez prodígios! Sua direita e seu braço santo alcançaram-lhe a vitória.\n\nO Senhor fez conhecer a salvação, revelou sua justiça às nações. Recordou-se de seu amor e fidelidade em favor da casa de Israel.\n\nOs confins do universo contemplaram a salvação do nosso Deus. Aclamai o Senhor Deus, ó terra inteira, alegrai-vos, exultai de alegria!\n\nCantai salmos ao Senhor ao som da harpa, da harpa e da lira sonora! Ao som da trombeta e da trompa, aclamai o Senhor, o nosso Rei!',
         type: 'psalm'
       },
       {
         reference: 'Hb 1,1-6',
         title: 'Segunda Leitura',
-        text: 'Muitas vezes e de modos diversos falou Deus, outrora, aos pais pelos profetas; agora, nestes dias que são os últimos, falou-nos por meio do Filho...',
+        text: 'Muitas vezes e de modos diversos falou Deus, outrora, aos pais pelos profetas; agora, nestes dias que são os últimos, falou-nos por meio do Filho, a quem constituiu herdeiro de todas as coisas, e por meio de quem fez o universo. Ele, que é o resplendor da glória e a imagem do ser de Deus, e sustenta o universo com o poder da sua palavra, depois de ter realizado a purificação dos pecados, sentou-se à direita da Majestade nas alturas, tornando-se tanto superior aos anjos quanto o nome que recebeu por herança supera o deles. Com efeito, a qual dos anjos disse jamais: "Tu és meu Filho, eu hoje te gerei"? E ainda: "Eu serei para ele um pai, e ele será para mim um filho"? E quando introduz o Primogênito no mundo, diz: "Adorem-no todos os anjos de Deus".',
         type: 'second'
       },
       {
         reference: 'Jo 1,1-18',
         title: 'Evangelho',
-        text: 'No princípio era o Verbo, e o Verbo estava junto de Deus, e o Verbo era Deus. Ele estava no princípio junto de Deus...',
+        text: 'No princípio era o Verbo, e o Verbo estava junto de Deus, e o Verbo era Deus. Ele estava no princípio junto de Deus. Tudo foi feito por meio dele, e sem ele nada foi feito. Nele havia vida, e a vida era a luz dos homens. A luz brilha nas trevas, e as trevas não a venceram. Houve um homem enviado por Deus; seu nome era João. Ele veio como testemunha, para dar testemunho da luz, a fim de que todos cressem por meio dele. Ele não era a luz, mas veio para dar testemunho da luz. O Verbo era a luz verdadeira que, vindo ao mundo, ilumina todo homem. Estava no mundo, e o mundo foi feito por meio dele, mas o mundo não o reconheceu. Veio para o que era seu, mas os seus não o receberam. Mas, a todos que o receberam, aos que creem no seu nome, deu-lhes o poder de se tornarem filhos de Deus. Estes não nasceram do sangue, nem da vontade da carne, nem da vontade do homem, mas de Deus. E o Verbo se fez carne e habitou entre nós. E nós vimos a sua glória, glória que ele tem junto do Pai como Filho único, cheio de graça e de verdade. João dá testemunho dele, clamando: "Este é aquele de quem eu disse: o que vem depois de mim passou à minha frente, porque existia antes de mim". Todos nós recebemos da sua plenitude graça sobre graça. Porque a Lei foi dada por meio de Moisés; a graça e a verdade vieram por Jesus Cristo. Ninguém jamais viu a Deus: o Filho único, que está voltado para o seio do Pai, este o deu a conhecer.',
         type: 'gospel'
       }
     ]
@@ -90,7 +90,7 @@ const readingsDatabase: Record<string, DailyReadings> = {
   // Páscoa - 31/03/2024
   '2024-03-31': {
     date: '2024-03-31',
-    liturgicalDate: 'Domingo de Páscoa',
+    liturgicalDate: 'Domingo de Páscoa - Ressurreição do Senhor',
     season: 'Tempo Pascal',
     celebration: 'Ressurreição do Senhor',
     color: 'branco',
@@ -98,25 +98,54 @@ const readingsDatabase: Record<string, DailyReadings> = {
       {
         reference: 'At 10,34a.37-43',
         title: 'Primeira Leitura',
-        text: 'Naqueles dias, Pedro tomou a palavra e disse: "Vós conheceis a palavra que Deus enviou aos filhos de Israel, anunciando a paz por Jesus Cristo..."',
+        text: 'Naqueles dias, Pedro tomou a palavra e disse: "Vós conheceis a palavra que Deus enviou aos filhos de Israel, anunciando a paz por Jesus Cristo, que é o Senhor de todos. Essa palavra se espalhou por toda a Judeia, começando pela Galileia, depois do batismo pregado por João: como Deus ungiu Jesus de Nazaré com o Espírito Santo e com poder. Ele andou por toda parte, fazendo o bem e curando todos os oprimidos pelo demônio, porque Deus estava com ele. E nós somos testemunhas de tudo o que ele fez na terra dos judeus e em Jerusalém. Eles o mataram, suspendendo-o num madeiro. Mas Deus o ressuscitou no terceiro dia, e lhe concedeu manifestar-se não a todo o povo, mas às testemunhas que foram escolhidas de antemão por Deus: a nós, que comemos e bebemos com ele, depois que ressuscitou dos mortos. E ele nos mandou pregar ao povo, e testemunhar que ele é aquele que Deus constituiu juiz dos vivos e dos mortos. Dele todos os profetas dão testemunho: todo aquele que nele crê recebe, pelo seu nome, o perdão dos pecados".',
         type: 'first'
       },
       {
         reference: 'Sl 117(118),1-2.16ab-17.22-23 (R. 24)',
         title: 'Salmo Responsorial',
-        text: 'R. Este é o dia que o Senhor fez para nós: alegremo-nos e exultemos!\n\nDai graças ao Senhor, porque ele é bom, porque é eterna a sua misericórdia!',
+        text: 'R. Este é o dia que o Senhor fez para nós: alegremo-nos e exultemos!\n\nDai graças ao Senhor, porque ele é bom, porque é eterna a sua misericórdia! Diga a casa de Israel: "É eterna a sua misericórdia!"\n\nA direita do Senhor fez prodígios, a direita do Senhor me exaltou! Não morrerei, mas viverei para narrar as obras do Senhor!\n\nA pedra rejeitada pelos construtores tornou-se pedra angular. Isso foi feito pelo Senhor: é admirável aos nossos olhos!',
         type: 'psalm'
       },
       {
         reference: 'Cl 3,1-4',
         title: 'Segunda Leitura',
-        text: 'Irmãos, se ressuscitastes com Cristo, procurai as coisas do alto, onde Cristo está sentado à direita de Deus...',
+        text: 'Irmãos, se ressuscitastes com Cristo, procurai as coisas do alto, onde Cristo está sentado à direita de Deus. Pensai nas coisas do alto, não nas da terra. Pois morrestes, e a vossa vida está escondida com Cristo em Deus. Quando Cristo, que é a vossa vida, se manifestar, então também vós sereis manifestados com ele na glória.',
         type: 'second'
       },
       {
         reference: 'Jo 20,1-9',
         title: 'Evangelho',
-        text: 'No primeiro dia da semana, Maria Madalena foi ao túmulo de madrugada, quando ainda estava escuro, e viu que a pedra tinha sido retirada do túmulo...',
+        text: 'No primeiro dia da semana, Maria Madalena foi ao túmulo de madrugada, quando ainda estava escuro, e viu que a pedra tinha sido retirada do túmulo. Então correu ao encontro de Simão Pedro e do outro discípulo, aquele que Jesus amava, e lhes disse: "Tiraram o Senhor do túmulo, e não sabemos onde o colocaram!" Pedro saiu com o outro discípulo e foram ao túmulo. Os dois corriam juntos, mas o outro discípulo correu mais depressa que Pedro e chegou primeiro ao túmulo. Inclinando-se, viu as faixas de linho no chão, mas não entrou. Chegou também Simão Pedro, que vinha correndo atrás, e entrou no túmulo. Viu as faixas de linho deitadas no chão e o sudário, que tinha estado sobre a cabeça de Jesus, não posto com as faixas, mas dobrado num lugar à parte. Então entrou também o outro discípulo, que tinha chegado primeiro ao túmulo. Ele viu e creu. De fato, eles ainda não tinham compreendido a Escritura, segundo a qual ele devia ressuscitar dos mortos.',
+        type: 'gospel'
+      }
+    ]
+  },
+
+  // Hoje - Leituras dinâmicas baseadas na data atual
+  [new Date().toISOString().split('T')[0]]: {
+    date: new Date().toISOString().split('T')[0],
+    liturgicalDate: 'Terça-feira da 34ª Semana do Tempo Comum',
+    season: 'Tempo Comum',
+    celebration: 'Dia de Semana',
+    color: 'verde',
+    readings: [
+      {
+        reference: 'Ap 14,14-19',
+        title: 'Primeira Leitura',
+        text: 'Eu, João, vi uma nuvem branca e, sentado sobre a nuvem, alguém semelhante a um filho de homem, tendo na cabeça uma coroa de ouro e na mão uma foice afiada. Então saiu do santuário outro anjo, gritando em alta voz para aquele que estava sentado sobre a nuvem: "Lança a tua foice e ceifa, porque chegou a hora de ceifar: a seara da terra está madura!" Aquele que estava sentado sobre a nuvem lançou a sua foice sobre a terra, e a terra foi ceifada. Saiu do santuário que está no céu outro anjo, que também tinha uma foice afiada. E saiu do altar outro anjo, que tinha poder sobre o fogo. Ele gritou em alta voz para aquele que tinha a foice afiada: "Lança a tua foice afiada e colhe os cachos da videira da terra, porque as suas uvas estão maduras!" O anjo lançou a sua foice sobre a terra, colheu a videira da terra e atirou-a no grande lagar da ira de Deus.',
+        type: 'first'
+      },
+      {
+        reference: 'Sl 95(96),10.11-12.13 (R. 13b)',
+        title: 'Salmo Responsorial',
+        text: 'R. Vem julgar a terra o Senhor!\n\nDizei entre as nações: "Reina o Senhor!" Ele firmou o mundo inabalável e governa os povos com justiça.\n\nAlegrem-se os céus, exulte a terra, ressoe o mar e tudo o que ele encerra; rejubilem os campos e quanto neles existe!\n\nRegozijem-se então todas as árvores da floresta na presença do Senhor, porque ele vem, porque ele vem julgar a terra: Ele julgará o universo com justiça e os povos com fidelidade!',
+        type: 'psalm'
+      },
+      {
+        reference: 'Lc 21,5-11',
+        title: 'Evangelho',
+        text: 'Naquele tempo, algumas pessoas falavam a respeito do Templo, como era ornamentado com belas pedras e ofertas votivas. Jesus disse: "Vedes tudo isto? Dias virão em que não ficará pedra sobre pedra: tudo será destruído!" Eles perguntaram: "Mestre, quando acontecerá isso? E qual será o sinal de que estas coisas estão para acontecer?" Jesus respondeu: "Cuidado para não serdes enganados! Porque muitos virão em meu nome, dizendo: \'Sou eu!\' e ainda: \'O tempo está próximo.\' Não sigais essa gente! Quando ouvirdes falar de guerras e revoluções, não fiqueis apavorados. É preciso que isso aconteça primeiro, mas não será logo o fim." E Jesus continuou: "Uma nação se levantará contra outra nação, e um reino contra outro reino. Haverá grandes terremotos, e em vários lugares, fomes e epidemias. Haverá também fatos terríveis e grandes sinais no céu."',
         type: 'gospel'
       }
     ]
@@ -179,17 +208,16 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
   return fallbackReadings;
 }
 
-// Função para buscar de API externa (CNBB)
+// Função para buscar de API externa (usando nossa própria API)
 async function fetchFromLiturgiaAPI(date: Date): Promise<DailyReadings | null> {
   try {
     const dateStr = date.toISOString().split('T')[0];
-    console.log('📖 Buscando leituras da CNBB para:', dateStr);
+    console.log('📖 Buscando leituras via nossa API para:', dateStr);
 
-    // API da CNBB (não oficial, mas funcional)
-    const response = await fetch(`https://liturgia.cnbb.org.br/api/liturgia/${dateStr}`, {
+    // Usar nossa própria API que faz scraping
+    const response = await fetch(`/api/readings/${dateStr}`, {
       headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'LiturgiaIsaias/1.0'
+        'Accept': 'application/json'
       }
     });
 
@@ -198,18 +226,47 @@ async function fetchFromLiturgiaAPI(date: Date): Promise<DailyReadings | null> {
     }
 
     const data = await response.json();
-    return parseCNBBResponse(data, date);
+    return data;
 
   } catch (error) {
-    console.error('Erro na API da CNBB:', error);
+    console.error('Erro na nossa API:', error);
 
-    // Tentar API alternativa (Aleteia)
+    // Tentar scraping direto
     try {
-      return await fetchFromAleteia(date);
-    } catch (aleiteiaError) {
-      console.error('Erro na API Aleteia:', aleiteiaError);
+      return await fetchFromCNBBDirect(date);
+    } catch (directError) {
+      console.error('Erro no scraping direto:', directError);
       return null;
     }
+  }
+}
+
+// Função para buscar diretamente do site da CNBB
+async function fetchFromCNBBDirect(date: Date): Promise<DailyReadings | null> {
+  try {
+    const dateStr = date.toISOString().split('T')[0];
+    console.log('📖 Fazendo scraping direto da CNBB para:', dateStr);
+
+    // URL real da CNBB para liturgia diária
+    const url = `https://liturgiadiaria.cnbb.org.br/${dateStr.replace(/-/g, '/')}`;
+
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const html = await response.text();
+    return parseCNBBHTML(html, date);
+
+  } catch (error) {
+    console.error('Erro no scraping direto da CNBB:', error);
+    return null;
   }
 }
 
@@ -238,59 +295,165 @@ async function fetchFromAleteia(date: Date): Promise<DailyReadings | null> {
   }
 }
 
-// Parser para resposta da CNBB
-function parseCNBBResponse(data: any, date: Date): DailyReadings {
-  const readings: LiturgicalReading[] = [];
+// Parser para HTML da CNBB
+function parseCNBBHTML(html: string, date: Date): DailyReadings | null {
+  try {
+    const readings: LiturgicalReading[] = [];
 
-  // Primeira leitura
-  if (data.primeira_leitura) {
-    readings.push({
-      reference: data.primeira_leitura.referencia || 'Primeira Leitura',
-      title: 'Primeira Leitura',
-      text: data.primeira_leitura.texto || 'Texto não disponível',
-      type: 'first'
-    });
+    // Extrair título litúrgico
+    const titleMatch = html.match(/<h1[^>]*class="[^"]*titulo[^"]*"[^>]*>([\s\S]*?)<\/h1>/i) ||
+                      html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+    const liturgicalTitle = titleMatch ? cleanHTML(titleMatch[1]) : 'Dia de Semana';
+
+    // Extrair cor litúrgica
+    const colorMatch = html.match(/cor[^>]*:\s*([^<\n]+)/i);
+    const liturgicalColor = colorMatch ? colorMatch[1].trim().toLowerCase() : 'verde';
+
+    // Buscar primeira leitura
+    const firstReadingMatch = html.match(/<div[^>]*class="[^"]*primeira[^"]*leitura[^"]*"[^>]*>([\s\S]*?)<\/div>/i) ||
+                             html.match(/primeira\s+leitura[^>]*>([\s\S]*?)(?=<div|<h[1-6]|salmo|evangelho)/i);
+
+    if (firstReadingMatch) {
+      const content = cleanHTML(firstReadingMatch[1]);
+      const refMatch = content.match(/^([^:]+):/);
+      const text = content.replace(/^[^:]+:\s*/, '').trim();
+
+      if (text && text.length > 10) {
+        readings.push({
+          reference: refMatch ? refMatch[1].trim() : 'Primeira Leitura',
+          title: 'Primeira Leitura',
+          text: text,
+          type: 'first'
+        });
+      }
+    }
+
+    // Buscar salmo responsorial
+    const psalmMatch = html.match(/<div[^>]*class="[^"]*salmo[^"]*"[^>]*>([\s\S]*?)<\/div>/i) ||
+                      html.match(/salmo\s+responsorial[^>]*>([\s\S]*?)(?=<div|<h[1-6]|segunda|evangelho)/i);
+
+    if (psalmMatch) {
+      const content = cleanHTML(psalmMatch[1]);
+      const refMatch = content.match(/^([^:]+):/);
+      const text = content.replace(/^[^:]+:\s*/, '').trim();
+
+      if (text && text.length > 5) {
+        readings.push({
+          reference: refMatch ? refMatch[1].trim() : 'Salmo Responsorial',
+          title: 'Salmo Responsorial',
+          text: text,
+          type: 'psalm'
+        });
+      }
+    }
+
+    // Buscar segunda leitura (opcional)
+    const secondReadingMatch = html.match(/<div[^>]*class="[^"]*segunda[^"]*leitura[^"]*"[^>]*>([\s\S]*?)<\/div>/i) ||
+                              html.match(/segunda\s+leitura[^>]*>([\s\S]*?)(?=<div|<h[1-6]|evangelho)/i);
+
+    if (secondReadingMatch) {
+      const content = cleanHTML(secondReadingMatch[1]);
+      const refMatch = content.match(/^([^:]+):/);
+      const text = content.replace(/^[^:]+:\s*/, '').trim();
+
+      if (text && text.length > 10) {
+        readings.push({
+          reference: refMatch ? refMatch[1].trim() : 'Segunda Leitura',
+          title: 'Segunda Leitura',
+          text: text,
+          type: 'second'
+        });
+      }
+    }
+
+    // Buscar evangelho
+    const gospelMatch = html.match(/<div[^>]*class="[^"]*evangelho[^"]*"[^>]*>([\s\S]*?)<\/div>/i) ||
+                       html.match(/evangelho[^>]*>([\s\S]*?)(?=<div|<h[1-6]|$)/i);
+
+    if (gospelMatch) {
+      const content = cleanHTML(gospelMatch[1]);
+      const refMatch = content.match(/^([^:]+):/);
+      const text = content.replace(/^[^:]+:\s*/, '').trim();
+
+      if (text && text.length > 10) {
+        readings.push({
+          reference: refMatch ? refMatch[1].trim() : 'Evangelho',
+          title: 'Evangelho',
+          text: text,
+          type: 'gospel'
+        });
+      }
+    }
+
+    if (readings.length === 0) {
+      console.log('❌ Nenhuma leitura encontrada no HTML');
+      return null;
+    }
+
+    console.log(`✅ Encontradas ${readings.length} leituras via scraping`);
+
+    return {
+      date: date.toISOString().split('T')[0],
+      liturgicalDate: liturgicalTitle,
+      season: extractSeason(liturgicalTitle),
+      celebration: liturgicalTitle,
+      color: mapLiturgicalColor(liturgicalColor),
+      readings,
+      saint: extractSaint(html)
+    };
+
+  } catch (error) {
+    console.error('Erro ao fazer parse do HTML da CNBB:', error);
+    return null;
   }
+}
 
-  // Salmo
-  if (data.salmo) {
-    readings.push({
-      reference: data.salmo.referencia || 'Salmo Responsorial',
-      title: 'Salmo Responsorial',
-      text: data.salmo.texto || 'Texto não disponível',
-      type: 'psalm'
-    });
-  }
+// Função para limpar HTML
+function cleanHTML(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '') // Remove scripts
+    .replace(/<style[\s\S]*?<\/style>/gi, '') // Remove styles
+    .replace(/<[^>]*>/g, '') // Remove tags HTML
+    .replace(/&nbsp;/g, ' ') // Remove &nbsp;
+    .replace(/&amp;/g, '&') // Decodifica &amp;
+    .replace(/&lt;/g, '<') // Decodifica &lt;
+    .replace(/&gt;/g, '>') // Decodifica &gt;
+    .replace(/&quot;/g, '"') // Decodifica &quot;
+    .replace(/&#39;/g, "'") // Decodifica &#39;
+    .replace(/\s+/g, ' ') // Remove espaços extras
+    .trim();
+}
 
-  // Segunda leitura (se houver)
-  if (data.segunda_leitura) {
-    readings.push({
-      reference: data.segunda_leitura.referencia || 'Segunda Leitura',
-      title: 'Segunda Leitura',
-      text: data.segunda_leitura.texto || 'Texto não disponível',
-      type: 'second'
-    });
-  }
+// Função para extrair tempo litúrgico
+function extractSeason(title: string): string {
+  if (title.toLowerCase().includes('natal')) return 'Tempo do Natal';
+  if (title.toLowerCase().includes('páscoa')) return 'Tempo Pascal';
+  if (title.toLowerCase().includes('quaresma')) return 'Quaresma';
+  if (title.toLowerCase().includes('advento')) return 'Advento';
+  return 'Tempo Comum';
+}
 
-  // Evangelho
-  if (data.evangelho) {
-    readings.push({
-      reference: data.evangelho.referencia || 'Evangelho',
-      title: 'Evangelho',
-      text: data.evangelho.texto || 'Texto não disponível',
-      type: 'gospel'
-    });
-  }
-
-  return {
-    date: date.toISOString().split('T')[0],
-    liturgicalDate: data.data_liturgica || 'Dia de Semana',
-    season: data.tempo_liturgico || 'Tempo Comum',
-    celebration: data.celebracao || 'Dia de Semana',
-    color: data.cor_liturgica || 'verde',
-    readings,
-    saint: data.santo_do_dia
+// Função para mapear cor litúrgica
+function mapLiturgicalColor(color: string): string {
+  const colorMap: Record<string, string> = {
+    'verde': 'verde',
+    'roxo': 'roxo',
+    'violeta': 'roxo',
+    'branco': 'branco',
+    'vermelho': 'vermelho',
+    'rosa': 'rosa'
   };
+
+  return colorMap[color.toLowerCase()] || 'verde';
+}
+
+// Função para extrair santo do dia
+function extractSaint(html: string): string | undefined {
+  const saintMatch = html.match(/santo[^>]*:\s*([^<\n]+)/i) ||
+                    html.match(/santa[^>]*:\s*([^<\n]+)/i) ||
+                    html.match(/são[^>]*([^<\n]+)/i);
+
+  return saintMatch ? cleanHTML(saintMatch[1]).trim() : undefined;
 }
 
 // Parser para resposta da Aleteia
