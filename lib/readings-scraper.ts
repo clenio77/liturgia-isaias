@@ -130,7 +130,7 @@ function parseCNBBHTML(html: string, date: Date): DailyReadings | null {
     const readings: LiturgicalReading[] = [];
     
     // Buscar primeira leitura
-    const firstReadingMatch = html.match(/<div[^>]*class="[^"]*primeira-leitura[^"]*"[^>]*>(.*?)<\/div>/s);
+    const firstReadingMatch = html.match(/<div[^>]*class="[^"]*primeira-leitura[^"]*"[^>]*>([\s\S]*?)<\/div>/);
     if (firstReadingMatch) {
       const text = cleanHTML(firstReadingMatch[1]);
       const refMatch = text.match(/^([^:]+):/);
@@ -143,7 +143,7 @@ function parseCNBBHTML(html: string, date: Date): DailyReadings | null {
     }
 
     // Buscar salmo
-    const psalmMatch = html.match(/<div[^>]*class="[^"]*salmo[^"]*"[^>]*>(.*?)<\/div>/s);
+    const psalmMatch = html.match(/<div[^>]*class="[^"]*salmo[^"]*"[^>]*>([\s\S]*?)<\/div>/);
     if (psalmMatch) {
       const text = cleanHTML(psalmMatch[1]);
       readings.push({
@@ -155,7 +155,7 @@ function parseCNBBHTML(html: string, date: Date): DailyReadings | null {
     }
 
     // Buscar evangelho
-    const gospelMatch = html.match(/<div[^>]*class="[^"]*evangelho[^"]*"[^>]*>(.*?)<\/div>/s);
+    const gospelMatch = html.match(/<div[^>]*class="[^"]*evangelho[^"]*"[^>]*>([\s\S]*?)<\/div>/);
     if (gospelMatch) {
       const text = cleanHTML(gospelMatch[1]);
       const refMatch = text.match(/^([^:]+):/);
