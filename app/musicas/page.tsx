@@ -1,512 +1,367 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Modal } from '@/components/ui/modal';
 import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Music, Search, Upload, Play, Pause, Download, Edit, Trash2, Volume2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Music, 
+  Search, 
+  Plus, 
+  Play, 
+  Pause, 
+  Upload,
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  Download,
+  Database
+} from 'lucide-react';
+
+interface MusicRecord {
+  id: number;
+  title: string;
+  composer: string;
+  category: string;
+  liturgical_season: string;
+  musical_key: string;
+  tempo: string;
+  difficulty: string;
+  audio_url?: string;
+  sheet_url?: string;
+  lyrics_url?: string;
+  chords_url?: string;
+  tags: string[];
+  status: string;
+  verified: boolean;
+  created_at: string;
+}
 
 export default function MusicasPage() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [musics, setMusics] = useState<MusicRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSeason, setSelectedSeason] = useState('');
   const [playingId, setPlayingId] = useState<number | null>(null);
-
-  // Estados para modais
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingMusic, setEditingMusic] = useState<any>(null);
 
-  // Estados para upload
-  const [uploadData, setUploadData] = useState({
-    titulo: '',
-    compositor: '',
-    categoria: 'Entrada',
-    tempo: 'Tempo Comum',
-    tom: 'C',
-    arquivo: null as File | null
-  });
+  useEffect(() => {
+    loadMusics();
+  }, [searchQuery, selectedCategory, selectedSeason]);
 
-  // Dados mock das músicas
-  const musicas = [
-    {
-      id: 1,
-      titulo: 'Vem, Espírito Santo',
-      compositor: 'Pe. José Weber',
-      categoria: 'Entrada',
-      tempo: 'Pentecostes',
-      tom: 'G',
-      duracao: '3:45',
-      arquivo: 'vem-espirito-santo.pdf',
-      audio: 'vem-espirito-santo.mp3'
-    },
-    {
-      id: 2,
-      titulo: 'Salmo 33',
-      compositor: 'Tradicional',
-      categoria: 'Salmo',
-      tempo: 'Tempo Comum',
-      tom: 'D',
-      duracao: '2:30',
-      arquivo: 'salmo-33.pdf',
-      audio: 'salmo-33.mp3'
-    },
-    {
-      id: 3,
-      titulo: 'Pão da Vida',
-      compositor: 'Ir. Miria Kolling',
-      categoria: 'Comunhão',
-      tempo: 'Tempo Comum',
-      tom: 'C',
-      duracao: '4:12',
-      arquivo: 'pao-da-vida.pdf',
-      audio: 'pao-da-vida.mp3'
+  const loadMusics = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('q', searchQuery);
+      if (selectedCategory) params.append('category', selectedCategory);
+      if (selectedSeason) params.append('season', selectedSeason);
+
+      const response = await fetch(`/api/musics?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setMusics(data.musics);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar músicas:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const filteredMusicas = musicas.filter(musica => 
-    musica.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    musica.compositor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (selectedCategory === '' || musica.categoria === selectedCategory)
-  );
-
-  // Funções para ações
-  const handlePlay = (id: number) => {
+  const handlePlay = (id: number, audioUrl?: string) => {
+    if (!audioUrl) return;
+    
     if (playingId === id) {
       setPlayingId(null);
     } else {
       setPlayingId(id);
-      // Simular reprodução de áudio
-      console.log(`Reproduzindo música ID: ${id}`);
+      const audio = new Audio(audioUrl);
+      audio.play();
+      audio.onended = () => setPlayingId(null);
     }
   };
 
-  const handleUpload = () => {
-    if (!uploadData.titulo || !uploadData.compositor || !uploadData.arquivo) {
-      alert('Por favor, preencha todos os campos obrigatórios');
-      return;
-    }
-
-    console.log('Upload da música:', uploadData);
-    // Aqui você adicionaria a lógica para salvar no backend
-
-    setShowUploadModal(false);
-    setUploadData({
-      titulo: '',
-      compositor: '',
-      categoria: 'Entrada',
-      tempo: 'Tempo Comum',
-      tom: 'C',
-      arquivo: null
-    });
-    alert('Música enviada com sucesso!');
-  };
-
-  const handleEdit = (musica: any) => {
-    setEditingMusic(musica);
-    setShowEditModal(true);
-  };
-
-  const handleSaveEdit = () => {
-    console.log('Editando música:', editingMusic);
-    // Aqui você adicionaria a lógica para salvar no backend
-
-    setShowEditModal(false);
-    setEditingMusic(null);
-    alert('Música atualizada com sucesso!');
-  };
-
-  const handleDelete = (id: number) => {
-    if (confirm('Tem certeza que deseja excluir esta música?')) {
-      console.log('Excluindo música ID:', id);
-      // Aqui você adicionaria a lógica para excluir no backend
-      alert('Música excluída com sucesso!');
-    }
-  };
-
-  const handleDownload = (musica: any) => {
-    console.log('Download da música:', musica.titulo);
-    // Aqui você adicionaria a lógica para download
-    alert(`Iniciando download de: ${musica.titulo}`);
-  };
+  const categories = ['Entrada', 'Salmo', 'Aclamação', 'Ofertório', 'Comunhão', 'Final', 'Adoração'];
+  const seasons = ['Tempo Comum', 'Advento', 'Natal', 'Quaresma', 'Páscoa', 'Todos'];
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-            <Music className="text-purple-600" />
-            Biblioteca Musical
-          </h1>
-          <p className="text-gray-600">Gerencie todas as músicas do repertório litúrgico</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Database className="h-6 w-6" />
+              Banco de Músicas SQLite
+            </h1>
+            <p className="text-gray-600">
+              Gerencie seu repertório litúrgico completo • {musics.length} músicas cadastradas
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={loadMusics}
+              className="flex items-center gap-2"
+            >
+              <Database className="h-4 w-4" />
+              Atualizar
+            </Button>
+            <Button 
+              onClick={() => setShowUploadModal(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Nova Música
+            </Button>
+          </div>
         </div>
 
-        {/* Filtros e Upload */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Estatísticas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total de Músicas</p>
+                <p className="text-2xl font-bold">{musics.length}</p>
+              </div>
+              <Music className="h-8 w-8 text-blue-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Com Áudio</p>
+                <p className="text-2xl font-bold">{musics.filter(m => m.audio_url).length}</p>
+              </div>
+              <Play className="h-8 w-8 text-green-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Verificadas</p>
+                <p className="text-2xl font-bold">{musics.filter(m => m.verified).length}</p>
+              </div>
+              <Eye className="h-8 w-8 text-purple-600" />
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Pendentes</p>
+                <p className="text-2xl font-bold">{musics.filter(m => !m.verified).length}</p>
+              </div>
+              <Upload className="h-8 w-8 text-orange-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros */}
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="h-5 w-5" />
+            <h3 className="font-medium">Filtros</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar música..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar músicas..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
               />
             </div>
 
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Todas as categorias</option>
-              <option value="Entrada">Entrada</option>
-              <option value="Salmo">Salmo</option>
-              <option value="Ofertório">Ofertório</option>
-              <option value="Comunhão">Comunhão</option>
-              <option value="Final">Final</option>
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
             </select>
 
-            <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-              <option value="">Todos os tempos</option>
-              <option value="advento">Advento</option>
-              <option value="natal">Natal</option>
-              <option value="quaresma">Quaresma</option>
-              <option value="pascoa">Páscoa</option>
-              <option value="comum">Tempo Comum</option>
-            </select>
-
-            <Button
-              className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
-              onClick={() => setShowUploadModal(true)}
+            <select
+              value={selectedSeason}
+              onChange={(e) => setSelectedSeason(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <Upload className="h-4 w-4" />
-              Nova Música
-            </Button>
+              <option value="">Todos os tempos</option>
+              {seasons.map(season => (
+                <option key={season} value={season}>{season}</option>
+              ))}
+            </select>
           </div>
         </div>
 
         {/* Lista de Músicas */}
-        <div className="grid gap-4">
-          {filteredMusicas.map((musica) => (
-            <div key={musica.id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => handlePlay(musica.id)}
-                    className="bg-purple-100 hover:bg-purple-200 p-3 rounded-full transition-colors"
-                  >
-                    {playingId === musica.id ? (
-                      <Pause className="h-5 w-5 text-purple-600" />
-                    ) : (
-                      <Play className="h-5 w-5 text-purple-600" />
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Carregando músicas do SQLite...</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {musics.map((music) => (
+              <div key={music.id} className="bg-white rounded-lg border p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {music.title}
+                      </h3>
+                      {music.verified && (
+                        <Badge className="bg-green-100 text-green-800">
+                          Verificada
+                        </Badge>
+                      )}
+                      <Badge variant="outline">
+                        {music.category}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-gray-600 mb-2">
+                      <strong>Compositor:</strong> {music.composer}
+                    </p>
+                    
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                      <span>Tom: {music.musical_key}</span>
+                      <span>Tempo: {music.tempo}</span>
+                      <span>Dificuldade: {music.difficulty}</span>
+                      <span>Tempo Litúrgico: {music.liturgical_season}</span>
+                    </div>
+                    
+                    {music.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {music.tags.map((tag, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     )}
-                  </button>
-
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800">{musica.titulo}</h3>
-                    <p className="text-gray-600">{musica.compositor}</p>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 ml-4">
+                    {music.audio_url && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePlay(music.id, music.audio_url)}
+                      >
+                        {playingId === music.id ? (
+                          <Pause className="h-4 w-4" />
+                        ) : (
+                          <Play className="h-4 w-4" />
+                        )}
+                      </Button>
+                    )}
+                    
+                    {music.sheet_url && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(music.sheet_url, '_blank')}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    )}
+                    
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    
+                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-6">
-                  <div className="text-center">
-                    <p className="text-sm text-gray-500">Categoria</p>
-                    <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-sm">
-                      {musica.categoria}
-                    </span>
-                  </div>
-
-                  <div className="text-center">
-                    <p className="text-sm text-gray-500">Tom</p>
-                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm font-mono">
-                      {musica.tom}
-                    </span>
-                  </div>
-
-                  <div className="text-center">
-                    <p className="text-sm text-gray-500">Duração</p>
-                    <span className="text-gray-700 text-sm">{musica.duracao}</span>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50"
-                      onClick={() => handleDownload(musica)}
-                      title="Download"
-                    >
-                      <Download className="h-4 w-4" />
-                    </button>
-                    <button
-                      className="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-50"
-                      onClick={() => handleEdit(musica)}
-                      title="Editar"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
-                      className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50"
-                      onClick={() => handleDelete(musica.id)}
-                      title="Excluir"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
+                
+                {/* Arquivos disponíveis */}
+                <div className="flex items-center gap-4 mt-4 pt-4 border-t text-xs text-gray-500">
+                  <span>Arquivos:</span>
+                  {music.audio_url && <Badge variant="outline">Áudio</Badge>}
+                  {music.sheet_url && <Badge variant="outline">Partitura</Badge>}
+                  {music.lyrics_url && <Badge variant="outline">Letra</Badge>}
+                  {music.chords_url && <Badge variant="outline">Cifras</Badge>}
+                  {!music.audio_url && !music.sheet_url && !music.lyrics_url && !music.chords_url && (
+                    <span className="text-gray-400">Nenhum arquivo</span>
+                  )}
                 </div>
               </div>
-
-              {playingId === musica.id && (
-                <div className="mt-4 p-4 bg-purple-50 rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                      <div className="bg-purple-200 h-2 rounded-full">
-                        <div className="bg-purple-600 h-2 rounded-full w-1/3"></div>
-                      </div>
-                    </div>
-                    <span className="text-sm text-purple-600">1:15 / {musica.duracao}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {filteredMusicas.length === 0 && (
-          <div className="text-center py-12">
-            <Music className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-600 mb-2">Nenhuma música encontrada</h3>
-            <p className="text-gray-500">Tente ajustar os filtros ou adicionar uma nova música</p>
+            ))}
+            
+            {musics.length === 0 && (
+              <div className="bg-white rounded-lg border p-12 text-center">
+                <Database className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Banco SQLite Vazio
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {searchQuery || selectedCategory || selectedSeason
+                    ? 'Nenhuma música encontrada com os filtros aplicados.'
+                    : 'Comece adicionando suas primeiras músicas ao banco de dados.'}
+                </p>
+                <Button onClick={() => setShowUploadModal(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Primeira Música
+                </Button>
+              </div>
+            )}
           </div>
         )}
-        </div>
-      </div>
 
-      {/* Modais */}
-
-      {/* Modal Upload Música */}
-      <Modal
-        isOpen={showUploadModal}
-        onClose={() => setShowUploadModal(false)}
-        title="Nova Música"
-        size="lg"
-      >
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título da Música *
-              </label>
-              <Input
-                type="text"
-                placeholder="Ex: Vem, Espírito Santo"
-                value={uploadData.titulo}
-                onChange={(e) => setUploadData({...uploadData, titulo: e.target.value})}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Compositor *
-              </label>
-              <Input
-                type="text"
-                placeholder="Ex: Pe. José Weber"
-                value={uploadData.compositor}
-                onChange={(e) => setUploadData({...uploadData, compositor: e.target.value})}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Categoria
-              </label>
-              <Select
-                value={uploadData.categoria}
-                onChange={(e) => setUploadData({...uploadData, categoria: e.target.value})}
-              >
-                <option value="Entrada">Entrada</option>
-                <option value="Salmo">Salmo</option>
-                <option value="Ofertório">Ofertório</option>
-                <option value="Comunhão">Comunhão</option>
-                <option value="Final">Final</option>
-              </Select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tempo Litúrgico
-              </label>
-              <Select
-                value={uploadData.tempo}
-                onChange={(e) => setUploadData({...uploadData, tempo: e.target.value})}
-              >
-                <option value="Tempo Comum">Tempo Comum</option>
-                <option value="Advento">Advento</option>
-                <option value="Natal">Natal</option>
-                <option value="Quaresma">Quaresma</option>
-                <option value="Páscoa">Páscoa</option>
-                <option value="Pentecostes">Pentecostes</option>
-              </Select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tom
-              </label>
-              <Select
-                value={uploadData.tom}
-                onChange={(e) => setUploadData({...uploadData, tom: e.target.value})}
-              >
-                <option value="C">C (Dó)</option>
-                <option value="D">D (Ré)</option>
-                <option value="E">E (Mi)</option>
-                <option value="F">F (Fá)</option>
-                <option value="G">G (Sol)</option>
-                <option value="A">A (Lá)</option>
-                <option value="B">B (Si)</option>
-              </Select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Arquivo da Música *
-            </label>
-            <Input
-              type="file"
-              accept=".pdf,.mp3,.wav,.jpg,.png"
-              onChange={(e) => setUploadData({...uploadData, arquivo: e.target.files?.[0] || null})}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Formatos aceitos: PDF (partitura), MP3/WAV (áudio), JPG/PNG (imagem)
-            </p>
-          </div>
-
-          {uploadData.arquivo && (
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="text-sm text-purple-800">
-                <strong>Arquivo selecionado:</strong> {uploadData.arquivo.name}
-              </p>
-              <p className="text-xs text-purple-600">
-                Tamanho: {(uploadData.arquivo.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-            </div>
-          )}
-
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={() => setShowUploadModal(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleUpload}>
-              Salvar Música
-            </Button>
-          </div>
-        </div>
-      </Modal>
-
-      {/* Modal Editar Música */}
-      <Modal
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        title="Editar Música"
-        size="lg"
-      >
-        {editingMusic && (
+        {/* Modal de Upload */}
+        <Modal
+          isOpen={showUploadModal}
+          onClose={() => setShowUploadModal(false)}
+          title="🎵 Adicionar Nova Música ao SQLite"
+          size="lg"
+        >
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Título da Música
-                </label>
-                <Input
-                  type="text"
-                  value={editingMusic.titulo}
-                  onChange={(e) => setEditingMusic({...editingMusic, titulo: e.target.value})}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Compositor
-                </label>
-                <Input
-                  type="text"
-                  value={editingMusic.compositor}
-                  onChange={(e) => setEditingMusic({...editingMusic, compositor: e.target.value})}
-                />
-              </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">Como Funciona:</h4>
+              <ol className="text-sm text-blue-800 space-y-1">
+                <li>1. Faça upload dos arquivos (áudio, partitura, cifra, letra)</li>
+                <li>2. Preencha as informações da música</li>
+                <li>3. A música será salva no banco SQLite</li>
+                <li>4. Estará disponível para uso nas missas</li>
+              </ol>
             </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Categoria
-                </label>
-                <Select
-                  value={editingMusic.categoria}
-                  onChange={(e) => setEditingMusic({...editingMusic, categoria: e.target.value})}
-                >
-                  <option value="Entrada">Entrada</option>
-                  <option value="Salmo">Salmo</option>
-                  <option value="Ofertório">Ofertório</option>
-                  <option value="Comunhão">Comunhão</option>
-                  <option value="Final">Final</option>
-                </Select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tempo Litúrgico
-                </label>
-                <Select
-                  value={editingMusic.tempo}
-                  onChange={(e) => setEditingMusic({...editingMusic, tempo: e.target.value})}
-                >
-                  <option value="Tempo Comum">Tempo Comum</option>
-                  <option value="Advento">Advento</option>
-                  <option value="Natal">Natal</option>
-                  <option value="Quaresma">Quaresma</option>
-                  <option value="Páscoa">Páscoa</option>
-                  <option value="Pentecostes">Pentecostes</option>
-                </Select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tom
-                </label>
-                <Select
-                  value={editingMusic.tom}
-                  onChange={(e) => setEditingMusic({...editingMusic, tom: e.target.value})}
-                >
-                  <option value="C">C (Dó)</option>
-                  <option value="D">D (Ré)</option>
-                  <option value="E">E (Mi)</option>
-                  <option value="F">F (Fá)</option>
-                  <option value="G">G (Sol)</option>
-                  <option value="A">A (Lá)</option>
-                  <option value="B">B (Si)</option>
-                </Select>
-              </div>
+            
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-2">Arraste arquivos aqui ou clique para selecionar</p>
+              <p className="text-sm text-gray-500">Suporta: MP3, WAV, PDF, TXT</p>
+              <Button className="mt-4">
+                Selecionar Arquivos
+              </Button>
             </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowEditModal(false)}>
+            
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowUploadModal(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleSaveEdit}>
-                Salvar Alterações
+              <Button>
+                Salvar no SQLite
               </Button>
             </div>
           </div>
-        )}
-      </Modal>
+        </Modal>
+      </div>
     </AppLayout>
   );
 }

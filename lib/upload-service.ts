@@ -183,41 +183,24 @@ async function uploadToAWS(file: File): Promise<UploadResult> {
 // Upload para Vercel Blob
 async function uploadToVercel(file: File): Promise<UploadResult> {
   try {
-    const response = await fetch('/api/upload', {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        filename: file.name,
-        contentType: file.type,
-      }),
+      body: file,
     });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const { url, fields } = await response.json();
-    
-    const formData = new FormData();
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.append(key, value as string);
-    });
-    formData.append('file', file);
-
-    const uploadResponse = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!uploadResponse.ok) {
-      throw new Error(`Upload failed! status: ${uploadResponse.status}`);
-    }
+    const data = await response.json();
 
     return {
       success: true,
-      url: `${url}/${fields.key}`,
+      url: data.url,
+      publicId: data.pathname,
       metadata: {
         size: file.size,
         type: file.type
