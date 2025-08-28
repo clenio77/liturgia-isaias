@@ -5,72 +5,53 @@ import { DailyReadings, LiturgicalReading } from './liturgical-readings';
 
 // Base de leituras completas para 2025
 export const completeReadingsDatabase: Record<string, DailyReadings> = {
-  // HOJE - 28 de agosto de 2025 - Santo Agostinho de Hipona
+  // HOJE - 28 de agosto de 2025 - Santo Agostinho de Hipona - LEITURAS REAIS
   '2025-08-28': {
     date: '2025-08-28',
-    liturgicalDate: 'Quinta-feira, Santo Agostinho de Hipona, bispo e doutor da Igreja, 21ª Semana do Tempo Comum',
+    liturgicalDate: 'Quinta-feira, Santo Agostinho, bispo e doutor da Igreja, Memória, 21ª Semana do Tempo Comum',
     season: 'Tempo Comum',
-    celebration: 'Santo Agostinho de Hipona',
+    celebration: 'Santo Agostinho',
     color: 'branco',
     liturgicalInfo: {
-      celebration: 'Santo Agostinho de Hipona, bispo e doutor da Igreja',
+      celebration: 'Santo Agostinho, bispo e doutor da Igreja, Memória',
       color: 'branco',
       season: 'Tempo Comum',
       week: '21ª Semana do Tempo Comum'
     },
     readings: [
       {
-        reference: '1Jo 4,7-16',
+        reference: '1Ts 3,7-13',
         title: 'Primeira Leitura',
-        text: `Caríssimos, amemo-nos uns aos outros, porque o amor vem de Deus, e todo aquele que ama nasceu de Deus e conhece a Deus. Quem não ama não chegou a conhecer a Deus, porque Deus é amor.
+        text: `Irmãos, ficamos confortados, em meio a toda angústia e tribulação, pela notícia acerca de vossa fé. Agora sentimo-nos reviver, porque vós estais firmes no Senhor. Como podemos agradecer a Deus por toda a alegria que nos invade diante do nosso Deus, por causa de vós?
 
-Foi assim que o amor de Deus se manifestou entre nós: Deus enviou o seu Filho único ao mundo, para que vivamos por ele. Nisto consiste o amor: não fomos nós que amamos a Deus, mas foi ele que nos amou e enviou o seu Filho como vítima de expiação pelos nossos pecados.
+Noite e dia rezamos efusivamente para vos rever e completar o que ainda falta na vossa fé. Que o próprio Deus e nosso Pai, e nosso Senhor Jesus dirijam os nossos passos até a vós.
 
-Caríssimos, se Deus nos amou assim, também nós devemos amar-nos uns aos outros. Ninguém jamais viu a Deus. Se nos amarmos uns aos outros, Deus permanece em nós e o seu amor chega em nós à perfeição.
-
-Nisto reconhecemos que permanecemos nele e ele em nós: ele nos deu do seu Espírito. E nós vimos e damos testemunho de que o Pai enviou o seu Filho como Salvador do mundo.
-
-Quem confessar que Jesus é o Filho de Deus, Deus permanece nele e ele em Deus. E nós conhecemos e cremos no amor que Deus tem por nós.
-
-Deus é amor: quem permanece no amor permanece em Deus e Deus permanece nele.`,
+O Senhor vos conceda que o amor entre vós e para com todos aumente e transborde sempre mais, a exemplo do amor que temos por vós. Que assim ele confirme os vossos corações numa santidade sem defeito aos olhos de Deus, nosso Pai, no dia da vinda de nosso Senhor Jesus, com todos os seus santos.`,
         type: 'first'
       },
       {
-        reference: 'Sl 118(119),9.10.11.12.13.14 (R. 12b)',
+        reference: 'Sl 89(90),3-4.12-13.14 e 17 (R. 14)',
         title: 'Salmo Responsorial',
-        text: `R. Ensinai-me, Senhor, os vossos mandamentos.
+        text: `R. Senhor, llénanos de tu amor, y gozaremos de alegría.
 
-Como purificará o jovem o seu caminho?
-Observando as vossas palavras!
-R. Ensinai-me, Senhor, os vossos mandamentos.
+Vós fazeis o homem voltar ao pó da terra, dizendo: "Voltai, filhos de Adão!" Pois mil anos são aos vossos olhos como o dia de ontem que passou, como uma vigília da noite.
+R. Senhor, llénanos de tu amor, y gozaremos de alegría.
 
-De todo o coração eu vos procuro:
-não deixeis que me desvie dos preceitos!
-R. Ensinai-me, Senhor, os vossos mandamentos.
+Ensinai-nos a contar os nossos dias, e dai ao nosso coração sabedoria! Senhor, voltai-vos! Até quando tardareis? Tende compaixão dos vossos servos!
+R. Senhor, llénanos de tu amor, y gozaremos de alegría.
 
-No coração guardo as vossas palavras,
-para não pecar contra vós.
-R. Ensinai-me, Senhor, os vossos mandamentos.
-
-Bendito sejais, ó Senhor Deus!
-Ensinai-me os vossos decretos!
-R. Ensinai-me, Senhor, os vossos mandamentos.
-
-Com os lábios proclamo e enumero
-todos os juízos de vossa boca.
-R. Ensinai-me, Senhor, os vossos mandamentos.
-
-Mais me alegro seguindo os vossos preceitos
-do que possuindo todas as riquezas.
-R. Ensinai-me, Senhor, os vossos mandamentos.`,
+Saciai-nos de manhã com vosso amor, e exultaremos de alegria todos os nossos dias! Desça sobre nós a bondade do Senhor nosso Deus! Tornai fecundo, ó Senhor, o trabalho de nossas mãos!
+R. Senhor, llénanos de tu amor, y gozaremos de alegría.`,
         type: 'psalm'
       },
       {
-        reference: 'Mt 23,8-12',
+        reference: 'Mt 24,42-51',
         title: 'Evangelho',
-        text: `Naquele tempo, disse Jesus aos seus discípulos: "Quanto a vós, não vos façais chamar 'Rabi', porque um só é o vosso Mestre, e todos vós sois irmãos. Na terra, não chameis a ninguém de 'pai', porque um só é o vosso Pai, aquele que está nos céus. Nem vos façais chamar 'guias', porque um só é o vosso Guia, o Cristo.
+        text: `Naquele tempo, disse Jesus aos seus discípulos: "Ficai vigiando, porque não sabeis em que dia vem o vosso Senhor. Entendei bem isto: se o dono da casa soubesse a que hora da noite vem o ladrão, ele vigiaria e não deixaria que a sua casa fosse arrombada. Por isso, ficai também vós preparados, porque, numa hora em que não pensais, virá o Filho do Homem.
 
-O maior dentre vós seja aquele que vos serve. Quem se exaltar será humilhado, e quem se humilhar será exaltado."`,
+Quem é o servo fiel e prudente, que o senhor encarregou de dar comida aos seus companheiros na hora certa? Feliz aquele servo que o senhor, ao chegar, encontrar fazendo assim! Em verdade vos digo: o senhor lhe confiará a administração de todos os seus bens.
+
+Mas, se o servo for mau e disser consigo mesmo: 'Meu senhor está demorando', e começar a espancar os seus companheiros, e a comer e beber com os bêbados, o senhor daquele servo virá num dia em que ele não espera e numa hora que ele não sabe. Então o punirá severamente e lhe dará a mesma sorte dos hipócritas. E aí haverá choro e ranger de dentes."`,
         type: 'gospel'
       }
     ]
