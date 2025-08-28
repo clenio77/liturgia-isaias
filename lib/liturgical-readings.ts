@@ -4,6 +4,7 @@
 import { scrapeReadings, getCachedReadings, setCachedReadings } from './readings-scraper';
 import { fetchCNBBReadings, validateReadings } from './cnbb-scraper';
 import { fetchCNBBReadingsComplete } from './cnbb-api';
+import { getCompleteReadingsFromDatabase, hasCompleteReadings } from './complete-readings-database';
 
 export interface LiturgicalReading {
   reference: string;
@@ -138,7 +139,15 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
     return cachedReadings;
   }
 
-  // 2. Verificar base de dados local (exemplos)
+  // 2. PRIORIDADE MÁXIMA: Base de leituras COMPLETAS
+  const completeReadings = getCompleteReadingsFromDatabase(date);
+  if (completeReadings) {
+    console.log(`📚 Leituras COMPLETAS encontradas na base para ${dateKey}`);
+    setCachedReadings(date, completeReadings);
+    return completeReadings;
+  }
+
+  // 3. Verificar base de dados local (exemplos - backup)
   if (readingsDatabase[dateKey]) {
     console.log(`📖 Leituras encontradas na base local para ${dateKey}`);
     setCachedReadings(date, readingsDatabase[dateKey]);
