@@ -108,55 +108,112 @@ function parseCNBBHTML(html: string, date: Date): DailyReadings | null {
       }
     }
     
-    // Padrões para buscar leituras
+    // Padrões melhorados para buscar leituras
     const readingPatterns = {
       first: [
-        /primeira\s+leitura[^>]*>([\s\S]*?)(?=segunda\s+leitura|salmo|evangelho|<\/div>|<div[^>]*class)/i,
-        /1[aª]?\s*leitura[^>]*>([\s\S]*?)(?=2[aª]?\s*leitura|salmo|evangelho|<\/div>)/i,
-        /<div[^>]*class="[^"]*primeira[^"]*leitura[^"]*"[^>]*>([\s\S]*?)<\/div>/i
+        // Padrões mais específicos para primeira leitura
+        /primeira\s+leitura[^>]*?>([\s\S]*?)(?=segunda\s+leitura|salmo\s+responsorial|evangelho|<\/(?:div|section|article)>)/i,
+        /1[aª]?\s*leitura[^>]*?>([\s\S]*?)(?=2[aª]?\s*leitura|salmo|evangelho|<\/(?:div|section|article)>)/i,
+        /<(?:div|section|article)[^>]*?class="[^"]*primeira[^"]*leitura[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /<(?:div|section|article)[^>]*?id="[^"]*primeira[^"]*leitura[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /leitura[^>]*?1[^>]*?>([\s\S]*?)(?=leitura[^>]*?2|salmo|evangelho|<\/(?:div|section|article)>)/i
       ],
       psalm: [
-        /salmo\s+responsorial[^>]*>([\s\S]*?)(?=segunda\s+leitura|evangelho|<\/div>|<div[^>]*class)/i,
-        /salmo[^>]*>([\s\S]*?)(?=segunda\s+leitura|evangelho|<\/div>)/i,
-        /<div[^>]*class="[^"]*salmo[^"]*"[^>]*>([\s\S]*?)<\/div>/i
+        // Padrões para salmo responsorial
+        /salmo\s+responsorial[^>]*?>([\s\S]*?)(?=segunda\s+leitura|evangelho|aclamação|<\/(?:div|section|article)>)/i,
+        /salmo[^>]*?>([\s\S]*?)(?=segunda\s+leitura|evangelho|aclamação|<\/(?:div|section|article)>)/i,
+        /<(?:div|section|article)[^>]*?class="[^"]*salmo[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /<(?:div|section|article)[^>]*?id="[^"]*salmo[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /responsorial[^>]*?>([\s\S]*?)(?=segunda\s+leitura|evangelho|<\/(?:div|section|article)>)/i
       ],
       second: [
-        /segunda\s+leitura[^>]*>([\s\S]*?)(?=evangelho|<\/div>|<div[^>]*class)/i,
-        /2[aª]?\s*leitura[^>]*>([\s\S]*?)(?=evangelho|<\/div>)/i,
-        /<div[^>]*class="[^"]*segunda[^"]*leitura[^"]*"[^>]*>([\s\S]*?)<\/div>/i
+        // Padrões para segunda leitura
+        /segunda\s+leitura[^>]*?>([\s\S]*?)(?=evangelho|aclamação|<\/(?:div|section|article)>)/i,
+        /2[aª]?\s*leitura[^>]*?>([\s\S]*?)(?=evangelho|aclamação|<\/(?:div|section|article)>)/i,
+        /<(?:div|section|article)[^>]*?class="[^"]*segunda[^"]*leitura[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /<(?:div|section|article)[^>]*?id="[^"]*segunda[^"]*leitura[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /leitura[^>]*?2[^>]*?>([\s\S]*?)(?=evangelho|aclamação|<\/(?:div|section|article)>)/i
       ],
       gospel: [
-        /evangelho[^>]*>([\s\S]*?)(?=<\/div>|<div[^>]*class|$)/i,
-        /<div[^>]*class="[^"]*evangelho[^"]*"[^>]*>([\s\S]*?)<\/div>/i
+        // Padrões para evangelho
+        /evangelho[^>]*?>([\s\S]*?)(?=<\/(?:div|section|article|body|html)>|$)/i,
+        /<(?:div|section|article)[^>]*?class="[^"]*evangelho[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /<(?:div|section|article)[^>]*?id="[^"]*evangelho[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /gospel[^>]*?>([\s\S]*?)(?=<\/(?:div|section|article)>|$)/i
+      ],
+      acclamation: [
+        // Padrões para aclamação ao evangelho
+        /aclamação[^>]*?>([\s\S]*?)(?=evangelho|<\/(?:div|section|article)>)/i,
+        /aleluia[^>]*?>([\s\S]*?)(?=evangelho|<\/(?:div|section|article)>)/i,
+        /<(?:div|section|article)[^>]*?class="[^"]*aclamação[^"]*"[^>]*?>([\s\S]*?)<\/(?:div|section|article)>/i,
+        /acclamation[^>]*?>([\s\S]*?)(?=evangelho|<\/(?:div|section|article)>)/i
       ]
     };
     
-    // Extrair cada tipo de leitura
+    // Extrair cada tipo de leitura com validação melhorada
     for (const [type, patterns] of Object.entries(readingPatterns)) {
+      let found = false;
+
       for (const pattern of patterns) {
+        if (found) break; // Já encontrou esta leitura
+
         const match = html.match(pattern);
         if (match) {
           const content = cleanHTML(match[1]);
-          
-          // Extrair referência bíblica
-          const refMatch = content.match(/^([^:.\n]+(?:\d+[,.\d\-\s]*)+)[:.]?\s*/);
-          const reference = refMatch ? refMatch[1].trim() : getDefaultReference(type);
-          
-          // Extrair texto (remover referência do início)
-          let text = content.replace(/^[^:.]+[:.]?\s*/, '').trim();
-          
-          // Validar se o texto tem conteúdo suficiente
-          if (text.length > 20) {
+
+          // Validar se o conteúdo não está vazio
+          if (content.length < 20) continue;
+
+          // Extrair referência bíblica com padrões melhorados
+          const refPatterns = [
+            /^([^:.\n]+(?:\d+[,.\d\-\s]*)+)[:.]?\s*/,  // Padrão padrão
+            /^([A-Za-z]+\s+\d+[,.\d\-\s]*)/,          // Livro + números
+            /^([^(]+\([^)]+\))/,                       // Referência com parênteses
+            /^([^—]+)—/,                               // Referência antes de travessão
+            /^([^–]+)–/                                // Referência antes de en-dash
+          ];
+
+          let reference = getDefaultReference(type);
+          let text = content;
+
+          for (const refPattern of refPatterns) {
+            const refMatch = content.match(refPattern);
+            if (refMatch && refMatch[1].trim().length > 3) {
+              reference = refMatch[1].trim();
+              text = content.replace(refPattern, '').trim();
+              break;
+            }
+          }
+
+          // Limpar texto adicional
+          text = text
+            .replace(/^[:\-–—]\s*/, '') // Remove separadores no início
+            .replace(/^\s*["'"]\s*/, '') // Remove aspas no início
+            .replace(/\s*["'"]\s*$/, '') // Remove aspas no final
+            .trim();
+
+          // Validar se o texto final tem conteúdo suficiente
+          if (text.length > 30) {
             readings.push({
               reference,
               title: getReadingTitle(type),
               text,
               type: type as any
             });
-            
-            console.log(`✅ ${getReadingTitle(type)} encontrada: ${reference}`);
-            break; // Parar no primeiro padrão que funcionar
+
+            console.log(`✅ ${getReadingTitle(type)} encontrada: ${reference} (${text.length} chars)`);
+            found = true;
           }
+        }
+      }
+
+      // Se não encontrou a leitura, tentar busca mais ampla
+      if (!found && (type === 'first' || type === 'gospel')) {
+        console.log(`⚠️ ${getReadingTitle(type)} não encontrada, tentando busca ampla...`);
+        const broadSearch = tryBroadSearch(html, type);
+        if (broadSearch) {
+          readings.push(broadSearch);
+          console.log(`✅ ${getReadingTitle(type)} encontrada via busca ampla: ${broadSearch.reference}`);
         }
       }
     }
@@ -320,4 +377,53 @@ export function validateReadings(readings: DailyReadings, date: Date): boolean {
   
   console.log('✅ Leituras validadas com sucesso');
   return true;
+}
+
+// Função de busca ampla quando padrões específicos falham
+function tryBroadSearch(html: string, type: string): any | null {
+  try {
+    const searchTerms = {
+      first: ['primeira', '1ª', 'leitura'],
+      psalm: ['salmo', 'responsorial'],
+      second: ['segunda', '2ª', 'leitura'],
+      gospel: ['evangelho', 'gospel'],
+      acclamation: ['aclamação', 'aleluia']
+    };
+
+    const terms = searchTerms[type as keyof typeof searchTerms];
+    if (!terms) return null;
+
+    // Buscar por blocos de texto que contenham os termos
+    const blocks = html.split(/<\/(?:div|section|article|p)>/i);
+
+    for (const block of blocks) {
+      const blockLower = block.toLowerCase();
+      const hasAllTerms = terms.every(term => blockLower.includes(term));
+
+      if (hasAllTerms) {
+        const content = cleanHTML(block);
+        if (content.length > 50) {
+          // Tentar extrair referência
+          const refMatch = content.match(/([A-Za-z]+\s+\d+[,.\d\-\s]*)/);
+          const reference = refMatch ? refMatch[1].trim() : getDefaultReference(type);
+
+          // Extrair texto
+          let text = content.replace(/^[^:]*[:.]?\s*/, '').trim();
+          if (text.length > 30) {
+            return {
+              reference,
+              title: getReadingTitle(type),
+              text,
+              type: type as any
+            };
+          }
+        }
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Erro na busca ampla:', error);
+    return null;
+  }
 }
