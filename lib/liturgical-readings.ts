@@ -3,6 +3,7 @@
 
 import { scrapeReadings, getCachedReadings, setCachedReadings } from './readings-scraper';
 import { fetchCNBBReadings, validateReadings } from './cnbb-scraper';
+import { fetchCNBBReadingsComplete } from './cnbb-api';
 
 export interface LiturgicalReading {
   reference: string;
@@ -144,9 +145,23 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
     return readingsDatabase[dateKey];
   }
 
-  // 3. Tentar buscar diretamente da CNBB (método principal)
+  // 3. NOVA API CNBB COMPLETA (PRIORIDADE MÁXIMA)
   try {
-    console.log(`🔍 Buscando leituras da CNBB para ${dateKey}`);
+    console.log(`🎯 Tentando nova API CNBB COMPLETA para ${dateKey}`);
+
+    const cnbbCompleteReadings = await fetchCNBBReadingsComplete(date);
+    if (cnbbCompleteReadings && cnbbCompleteReadings.readings.length >= 2) {
+      console.log('✅ Leituras COMPLETAS obtidas da nova API CNBB');
+      setCachedReadings(date, cnbbCompleteReadings);
+      return cnbbCompleteReadings;
+    }
+  } catch (error) {
+    console.error('Erro na nova API CNBB completa:', error);
+  }
+
+  // 4. Tentar buscar diretamente da CNBB (método antigo como backup)
+  try {
+    console.log(`🔍 Buscando leituras da CNBB (método antigo) para ${dateKey}`);
 
     const cnbbReadings = await fetchCNBBReadings(date);
     if (cnbbReadings && validateReadings(cnbbReadings, date)) {
@@ -155,7 +170,7 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
     }
 
   } catch (error) {
-    console.error('Erro no scraping da CNBB:', error);
+    console.error('Erro no scraping da CNBB (método antigo):', error);
   }
 
   // 4. Tentar APIs alternativas como backup
