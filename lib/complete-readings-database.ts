@@ -205,9 +205,18 @@ export function getCompleteReadingsFromDatabase(date: Date): DailyReadings | nul
   console.log(`📋 Chaves disponíveis na base:`, Object.keys(completeReadingsDatabase));
 
   if (completeReadingsDatabase[dateKey]) {
-    console.log(`📚 ✅ Leituras COMPLETAS encontradas na base local para ${dateKey}`);
-    console.log(`📖 Primeira leitura:`, completeReadingsDatabase[dateKey].readings[0].text.substring(0, 100) + '...');
-    return completeReadingsDatabase[dateKey];
+    const readings = completeReadingsDatabase[dateKey];
+    console.log(`📚 ✅ LEITURAS COMPLETAS ENCONTRADAS - BASE PRIORITÁRIA para ${dateKey}`);
+    console.log(`🎯 DADOS COMPLETOS:`, {
+      celebration: readings.liturgicalInfo.celebration,
+      color: readings.liturgicalInfo.color,
+      readingsCount: readings.readings.length,
+      firstReadingLength: readings.readings[0].text.length,
+      firstReadingTitle: readings.readings[0].title
+    });
+    console.log(`📖 Primeira leitura (primeiros 150 chars):`, readings.readings[0].text.substring(0, 150) + '...');
+    console.log(`🎨 Cor litúrgica:`, readings.liturgicalInfo.color);
+    return readings;
   }
 
   console.log(`❌ Leituras completas NÃO encontradas para ${dateKey}`);

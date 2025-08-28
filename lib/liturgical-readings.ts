@@ -133,18 +133,20 @@ const readingsDatabase: Record<string, DailyReadings> = {
 export async function getDailyReadings(date: Date = new Date()): Promise<DailyReadings | null> {
   const dateKey = date.toISOString().split('T')[0];
 
-  // 1. Verificar cache em memória primeiro
-  const cachedReadings = getCachedReadings(date);
-  if (cachedReadings) {
-    return cachedReadings;
-  }
-
-  // 2. PRIORIDADE MÁXIMA: Base de leituras COMPLETAS
+  // 🎯 PRIORIDADE ABSOLUTA: Base de leituras COMPLETAS (SEMPRE PRIMEIRO)
   const completeReadings = getCompleteReadingsFromDatabase(date);
   if (completeReadings) {
-    console.log(`📚 Leituras COMPLETAS encontradas na base para ${dateKey}`);
+    console.log(`📚 ✅ LEITURAS COMPLETAS ENCONTRADAS - USANDO BASE PRIORITÁRIA para ${dateKey}`);
+    console.log(`📖 Primeira leitura preview:`, completeReadings.readings[0].text.substring(0, 100) + '...');
     setCachedReadings(date, completeReadings);
     return completeReadings;
+  }
+
+  // 2. Verificar cache em memória (APENAS se não há leituras completas)
+  const cachedReadings = getCachedReadings(date);
+  if (cachedReadings) {
+    console.log(`📦 Usando cache (sem leituras completas disponíveis)`);
+    return cachedReadings;
   }
 
   // 3. Verificar base de dados local (exemplos - backup)
