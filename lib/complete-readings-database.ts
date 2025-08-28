@@ -3,9 +3,80 @@
 
 import { DailyReadings, LiturgicalReading } from './liturgical-readings';
 
-// Base de leituras completas para janeiro 2025
+// Base de leituras completas para 2025
 export const completeReadingsDatabase: Record<string, DailyReadings> = {
-  // Hoje - 28 de janeiro de 2025 - LEITURAS REAIS DO VATICAN NEWS
+  // HOJE - 28 de agosto de 2025 - Santo Agostinho de Hipona
+  '2025-08-28': {
+    date: '2025-08-28',
+    liturgicalDate: 'Quinta-feira, Santo Agostinho de Hipona, bispo e doutor da Igreja, 21ª Semana do Tempo Comum',
+    season: 'Tempo Comum',
+    celebration: 'Santo Agostinho de Hipona',
+    color: 'branco',
+    liturgicalInfo: {
+      celebration: 'Santo Agostinho de Hipona, bispo e doutor da Igreja',
+      color: 'branco',
+      season: 'Tempo Comum',
+      week: '21ª Semana do Tempo Comum'
+    },
+    readings: [
+      {
+        reference: '1Jo 4,7-16',
+        title: 'Primeira Leitura',
+        text: `Caríssimos, amemo-nos uns aos outros, porque o amor vem de Deus, e todo aquele que ama nasceu de Deus e conhece a Deus. Quem não ama não chegou a conhecer a Deus, porque Deus é amor.
+
+Foi assim que o amor de Deus se manifestou entre nós: Deus enviou o seu Filho único ao mundo, para que vivamos por ele. Nisto consiste o amor: não fomos nós que amamos a Deus, mas foi ele que nos amou e enviou o seu Filho como vítima de expiação pelos nossos pecados.
+
+Caríssimos, se Deus nos amou assim, também nós devemos amar-nos uns aos outros. Ninguém jamais viu a Deus. Se nos amarmos uns aos outros, Deus permanece em nós e o seu amor chega em nós à perfeição.
+
+Nisto reconhecemos que permanecemos nele e ele em nós: ele nos deu do seu Espírito. E nós vimos e damos testemunho de que o Pai enviou o seu Filho como Salvador do mundo.
+
+Quem confessar que Jesus é o Filho de Deus, Deus permanece nele e ele em Deus. E nós conhecemos e cremos no amor que Deus tem por nós.
+
+Deus é amor: quem permanece no amor permanece em Deus e Deus permanece nele.`,
+        type: 'first'
+      },
+      {
+        reference: 'Sl 118(119),9.10.11.12.13.14 (R. 12b)',
+        title: 'Salmo Responsorial',
+        text: `R. Ensinai-me, Senhor, os vossos mandamentos.
+
+Como purificará o jovem o seu caminho?
+Observando as vossas palavras!
+R. Ensinai-me, Senhor, os vossos mandamentos.
+
+De todo o coração eu vos procuro:
+não deixeis que me desvie dos preceitos!
+R. Ensinai-me, Senhor, os vossos mandamentos.
+
+No coração guardo as vossas palavras,
+para não pecar contra vós.
+R. Ensinai-me, Senhor, os vossos mandamentos.
+
+Bendito sejais, ó Senhor Deus!
+Ensinai-me os vossos decretos!
+R. Ensinai-me, Senhor, os vossos mandamentos.
+
+Com os lábios proclamo e enumero
+todos os juízos de vossa boca.
+R. Ensinai-me, Senhor, os vossos mandamentos.
+
+Mais me alegro seguindo os vossos preceitos
+do que possuindo todas as riquezas.
+R. Ensinai-me, Senhor, os vossos mandamentos.`,
+        type: 'psalm'
+      },
+      {
+        reference: 'Mt 23,8-12',
+        title: 'Evangelho',
+        text: `Naquele tempo, disse Jesus aos seus discípulos: "Quanto a vós, não vos façais chamar 'Rabi', porque um só é o vosso Mestre, e todos vós sois irmãos. Na terra, não chameis a ninguém de 'pai', porque um só é o vosso Pai, aquele que está nos céus. Nem vos façais chamar 'guias', porque um só é o vosso Guia, o Cristo.
+
+O maior dentre vós seja aquele que vos serve. Quem se exaltar será humilhado, e quem se humilhar será exaltado."`,
+        type: 'gospel'
+      }
+    ]
+  },
+
+  // 28 de janeiro de 2025 - LEITURAS REAIS DO VATICAN NEWS
   '2025-01-28': {
     date: '2025-01-28',
     liturgicalDate: 'Terça-feira, Santo Tomás de Aquino, presbítero e doutor da Igreja, 3ª Semana do Tempo Comum',

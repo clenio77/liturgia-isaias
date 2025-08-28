@@ -24,36 +24,9 @@ export interface DailyReadings {
   memorial?: string;
 }
 
-// Base de dados de leituras (simulada - em produção viria de API)
+// Base de dados de leituras (apenas exemplos estáticos - NÃO usar para datas atuais)
 const readingsDatabase: Record<string, DailyReadings> = {
-  // Exemplo para hoje
-  [new Date().toISOString().split('T')[0]]: {
-    date: new Date().toISOString().split('T')[0],
-    liturgicalDate: 'Terça-feira da 34ª Semana do Tempo Comum',
-    season: 'Tempo Comum',
-    celebration: 'Dia de Semana',
-    color: 'verde',
-    readings: [
-      {
-        reference: 'Ap 14,14-19',
-        title: 'Primeira Leitura',
-        text: 'Eu, João, vi uma nuvem branca e, sentado sobre a nuvem, alguém semelhante a um filho de homem, tendo na cabeça uma coroa de ouro e na mão uma foice afiada...',
-        type: 'first'
-      },
-      {
-        reference: 'Sl 95(96),10.11-12.13 (R. 13b)',
-        title: 'Salmo Responsorial',
-        text: 'R. Vem julgar a terra o Senhor!\n\nDizei entre as nações: "Reina o Senhor!" Ele firmou o mundo inabalável e governa os povos com justiça.',
-        type: 'psalm'
-      },
-      {
-        reference: 'Lc 21,5-11',
-        title: 'Evangelho',
-        text: 'Naquele tempo, algumas pessoas falavam a respeito do Templo, como era ornamentado com belas pedras e ofertas votivas. Jesus disse: "Vedes tudo isto? Dias virão em que não ficará pedra sobre pedra..."',
-        type: 'gospel'
-      }
-    ]
-  },
+  // NOTA: Não incluir datas dinâmicas aqui - usar sistema de busca em tempo real
   
   // Natal - 25/12
   '2024-12-25': {
@@ -132,8 +105,9 @@ const readingsDatabase: Record<string, DailyReadings> = {
 // Função principal para obter leituras do dia
 export async function getDailyReadings(date: Date = new Date()): Promise<DailyReadings | null> {
   const dateKey = date.toISOString().split('T')[0];
+  console.log(`🔍 INICIANDO BUSCA DE LEITURAS para ${dateKey}`);
 
-  // 🎯 PRIORIDADE ABSOLUTA: Base de leituras COMPLETAS (SEMPRE PRIMEIRO)
+  // 🎯 PRIORIDADE 1: Base de leituras COMPLETAS (datas especiais pré-configuradas)
   const completeReadings = getCompleteReadingsFromDatabase(date);
   if (completeReadings) {
     console.log(`📚 ✅ LEITURAS COMPLETAS ENCONTRADAS - USANDO BASE PRIORITÁRIA para ${dateKey}`);
@@ -142,32 +116,42 @@ export async function getDailyReadings(date: Date = new Date()): Promise<DailyRe
     return completeReadings;
   }
 
-  // 2. Verificar cache em memória (APENAS se não há leituras completas)
+  console.log(`📋 Base de leituras completas não tem dados para ${dateKey} - BUSCANDO EM TEMPO REAL`);
+
+  // 🔄 PRIORIDADE 2: Busca automática em tempo real (CNBB API - SEMPRE ATUAL)
+  console.log(`🌐 Tentando buscar leituras ATUAIS da CNBB para ${dateKey}...`);
+  try {
+    const cnbbReadings = await fetchCNBBReadingsComplete(date);
+    if (cnbbReadings && validateReadings(cnbbReadings)) {
+      console.log(`📚 ✅ LEITURAS ATUAIS ENCONTRADAS na CNBB para ${dateKey}`);
+      console.log(`📖 Primeira leitura preview:`, cnbbReadings.readings[0].text.substring(0, 100) + '...');
+      setCachedReadings(date, cnbbReadings);
+      return cnbbReadings;
+    }
+  } catch (error) {
+    console.log(`❌ Erro ao buscar na CNBB:`, error);
+  }
+
+  // 🔄 PRIORIDADE 3: Cache em memória (se já foi buscado antes)
   const cachedReadings = getCachedReadings(date);
   if (cachedReadings) {
-    console.log(`📦 Usando cache (sem leituras completas disponíveis)`);
+    console.log(`📦 ✅ LEITURAS ENCONTRADAS NO CACHE para ${dateKey}`);
+    console.log(`📖 Primeira leitura preview:`, cachedReadings.readings[0].text.substring(0, 100) + '...');
     return cachedReadings;
   }
 
-  // 3. Verificar base de dados local (exemplos - backup)
-  if (readingsDatabase[dateKey]) {
-    console.log(`📖 Leituras encontradas na base local para ${dateKey}`);
-    setCachedReadings(date, readingsDatabase[dateKey]);
-    return readingsDatabase[dateKey];
-  }
-
-  // 3. NOVA API CNBB COMPLETA (PRIORIDADE MÁXIMA)
+  // 🌐 PRIORIDADE 4: Scraping Vatican News (backup para leituras completas)
+  console.log(`🌐 Tentando buscar leituras do Vatican News para ${dateKey}...`);
   try {
-    console.log(`🎯 Tentando nova API CNBB COMPLETA para ${dateKey}`);
-
-    const cnbbCompleteReadings = await fetchCNBBReadingsComplete(date);
-    if (cnbbCompleteReadings && cnbbCompleteReadings.readings.length >= 2) {
-      console.log('✅ Leituras COMPLETAS obtidas da nova API CNBB');
-      setCachedReadings(date, cnbbCompleteReadings);
-      return cnbbCompleteReadings;
+    const scrapedReadings = await scrapeReadings(date);
+    if (scrapedReadings && scrapedReadings.readings.length >= 2) {
+      console.log(`📚 ✅ LEITURAS ENCONTRADAS no Vatican News para ${dateKey}`);
+      console.log(`📖 Primeira leitura preview:`, scrapedReadings.readings[0].text.substring(0, 100) + '...');
+      setCachedReadings(date, scrapedReadings);
+      return scrapedReadings;
     }
   } catch (error) {
-    console.error('Erro na nova API CNBB completa:', error);
+    console.log(`❌ Erro ao buscar no Vatican News:`, error);
   }
 
   // 4. Tentar buscar diretamente da CNBB (método antigo como backup)
