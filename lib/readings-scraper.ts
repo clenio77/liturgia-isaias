@@ -261,3 +261,9 @@ export function setCachedReadings(date: Date, readings: DailyReadings): void {
   });
   console.log('💾 Leituras salvas no cache');
 }
+
+// Função para limpar cache (para debug e atualizações)
+export function clearReadingsCache(): void {
+  readingsCache.clear();
+  console.log('🧹 Cache de leituras limpo!');
+}

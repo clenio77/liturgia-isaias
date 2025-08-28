@@ -5,26 +5,28 @@ import { DailyReadings, LiturgicalReading } from './liturgical-readings';
 
 // Base de leituras completas para janeiro 2025
 export const completeReadingsDatabase: Record<string, DailyReadings> = {
-  // Hoje - 28 de janeiro de 2025
+  // Hoje - 28 de janeiro de 2025 - LEITURAS REAIS DO VATICAN NEWS
   '2025-01-28': {
     date: '2025-01-28',
-    liturgicalDate: 'Terça-feira da 3ª Semana do Tempo Comum',
+    liturgicalDate: 'Terça-feira, Santo Tomás de Aquino, presbítero e doutor da Igreja, 3ª Semana do Tempo Comum',
     season: 'Tempo Comum',
-    celebration: 'Dia de Semana',
-    color: 'verde',
+    celebration: 'Santo Tomás de Aquino',
+    color: 'branco',
     readings: [
       {
         reference: 'Hb 10,1-10',
         title: 'Primeira Leitura',
-        text: `Irmãos: A Lei possui apenas uma sombra dos bens futuros, e não a realidade das coisas. Por isso, com os mesmos sacrifícios que se oferecem continuamente, ano após ano, ela nunca pode tornar perfeitos os que se aproximam de Deus.
+        text: `Irmãos, a Lei possui apenas o esboço dos bens futuros e não o modelo real das coisas. Também, com os seus sacrifícios sempre iguais e sem desistência repetidos cada ano, ela é totalmente incapaz de levar à perfeição aqueles que se aproximam para oferecê-los.
 
-Do contrário, não se teria cessado de oferecê-los? Pois os que prestam culto, uma vez purificados, não teriam mais consciência de pecado. Mas, pelo contrário, esses sacrifícios renovam a cada ano a lembrança dos pecados, pois é impossível que o sangue de touros e de bodes tire os pecados.
+Se não fosse assim, não se teria deixado de oferecê-los, se os que prestam culto, uma vez purificados, já não tivessem nenhuma consciência dos pecados?
 
-Por isso, entrando no mundo, Cristo diz: "Tu não quiseste sacrifício nem oferenda, mas me formaste um corpo. Não te agradaram holocaustos nem sacrifícios pelo pecado. Então eu disse: Eis-me aqui — no rolo do livro está escrito a meu respeito —, eu vim, ó Deus, para fazer a tua vontade".
+Mas, ao contrário, é por meio destes sacrifícios que, anualmente, se renova a memória dos pecados, pois é impossível eliminar os pecados com o sangue de touros e bodes.
 
-Primeiro ele diz: "Tu não quiseste nem te agradaram sacrifícios nem oferendas, holocaustos nem sacrifícios pelo pecado" — coisas que são oferecidas segundo a Lei. Depois acrescenta: "Eis-me aqui, eu vim para fazer a tua vontade". Assim, ele suprime o primeiro para estabelecer o segundo.
+Por isso, ao entrar no mundo, Cristo afirma: "Tu não quiseste vítima nem oferenda, mas formaste-me um corpo. Não foram do teu agrado holocaustos nem sacrifícios pelo pecado. Por isso eu disse: Eis que eu venho. No livro está escrito a meu respeito: Eu vim, ó Deus, para fazer a tua vontade".
 
-É em virtude desta vontade que nós fomos santificados, pela oferenda do corpo de Jesus Cristo, feita uma vez por todas.`,
+Depois de dizer: "Tu não quiseste nem te agradaram vítimas, oferendas, holocaustos, sacrifícios pelo pecado" - coisas oferecidas segundo a Lei - ele acrescenta: "Eu vim para fazer a tua vontade". Com isso, suprime o primeiro sacrifício, para estabelecer o segundo.
+
+É graças a esta vontade que somos santificados pela oferenda do corpo de Jesus Cristo, realizada uma vez por todas.`,
         type: 'first'
       },
       {
@@ -60,9 +62,9 @@ R. Eis que venho, Senhor, para fazer a vossa vontade.`,
       {
         reference: 'Mc 3,31-35',
         title: 'Evangelho',
-        text: `Naquele tempo, chegaram a mãe e os irmãos de Jesus. Ficaram do lado de fora e mandaram chamá-lo. Havia uma multidão sentada ao redor de Jesus, e lhe disseram: "Tua mãe e teus irmãos estão lá fora à tua procura".
+        text: `Naquele tempo, chegaram a mãe de Jesus e seus irmãos. Eles ficaram do lado de fora e mandaram chamá-lo. Havia uma multidão sentada ao redor dele. Então lhe disseram: "Tua mãe e teus irmãos estão lá fora à tua procura."
 
-Jesus respondeu: "Quem é minha mãe e quem são meus irmãos?" E, olhando para os que estavam sentados ao seu redor, disse: "Aqui estão minha mãe e meus irmãos. Quem fizer a vontade de Deus, esse é meu irmão, minha irmã e minha mãe".`,
+Ele respondeu: "Quem é minha mãe, e quem são meus irmãos?" E olhando para os que estavam sentados ao seu redor, disse: "Aqui estão minha mãe e meus irmãos. Quem faz a vontade de Deus, esse é meu irmão, minha irmã e minha mãe."`,
         type: 'gospel'
       }
     ]
@@ -198,12 +200,17 @@ E os que recebem a semente em boa terra são os que ouvem a palavra, a acolhem e
 // Função para obter leituras completas da base local
 export function getCompleteReadingsFromDatabase(date: Date): DailyReadings | null {
   const dateKey = date.toISOString().split('T')[0];
-  
+
+  console.log(`🔍 Buscando leituras completas para ${dateKey}`);
+  console.log(`📋 Chaves disponíveis na base:`, Object.keys(completeReadingsDatabase));
+
   if (completeReadingsDatabase[dateKey]) {
-    console.log(`📚 Leituras COMPLETAS encontradas na base local para ${dateKey}`);
+    console.log(`📚 ✅ Leituras COMPLETAS encontradas na base local para ${dateKey}`);
+    console.log(`📖 Primeira leitura:`, completeReadingsDatabase[dateKey].readings[0].text.substring(0, 100) + '...');
     return completeReadingsDatabase[dateKey];
   }
-  
+
+  console.log(`❌ Leituras completas NÃO encontradas para ${dateKey}`);
   return null;
 }
 
